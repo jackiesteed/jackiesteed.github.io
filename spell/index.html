@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>三年级上 · 单词拼写</title>
+<style>
+  :root {
+    --bg: #fff8ec;
+    --card: #ffffff;
+    --ink: #2b2b3a;
+    --muted: #8a8aa0;
+    --accent: #ff9f43;
+    --good: #2ecc71;
+    --bad: #e74c3c;
+    --shadow: 0 10px 30px rgba(60, 50, 30, .12);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    background: radial-gradient(1200px 600px at 50% -10%, #ffe9c2 0%, var(--bg) 60%) fixed;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px 40px;
+  }
+  h1 {
+    margin: 6px 0 14px;
+    font-size: 22px;
+    letter-spacing: .5px;
+  }
+  .units {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 16px;
+    max-width: 720px;
+  }
+  .unit-btn {
+    border: 2px solid #ffd9a3;
+    background: #fff;
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .unit-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .card {
+    background: var(--card);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    padding: 28px 24px 24px;
+    width: min(520px, 100%);
+    text-align: center;
+  }
+  .emoji {
+    font-size: 72px;
+    line-height: 1;
+    margin: 6px 0 4px;
+    user-select: none;
+  }
+  .meaning {
+    font-size: 26px;
+    font-weight: 600;
+    margin: 6px 0 2px;
+  }
+  .hint {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 16px;
+    min-height: 20px;
+    letter-spacing: 6px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  input[type="text"] {
+    flex: 1;
+    font-size: 22px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 2px solid #eee;
+    outline: none;
+    text-align: center;
+    letter-spacing: 4px;
+    text-transform: lowercase;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    transition: border-color .15s;
+  }
+  input[type="text"]:focus { border-color: var(--accent); }
+  input.shake { animation: shake .35s; border-color: var(--bad); }
+  input.good { border-color: var(--good); }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+    75% { transform: translateX(-4px); }
+  }
+  button.primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 0 18px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button.primary:active { transform: scale(.97); }
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    gap: 8px;
+  }
+  .ghost {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 6px 8px;
+  }
+  .ghost:hover { color: var(--ink); }
+  .stats {
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .answer {
+    margin-top: 14px;
+    min-height: 22px;
+    font-size: 16px;
+    color: var(--good);
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  .answer.bad { color: var(--bad); }
+  footer {
+    margin-top: 22px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+  <h1>📚 三年级上 · 学单词</h1>
+  <div class="units" id="units"></div>
+
+  <div class="card">
+    <div class="emoji" id="emoji">🐣</div>
+    <div class="meaning" id="meaning">准备好了吗？</div>
+    <div class="hint" id="hint">— — —</div>
+    <div class="input-row">
+      <input id="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="在这里拼写…" />
+      <button class="primary" id="submit">确认</button>
+    </div>
+    <div class="answer" id="answer"></div>
+    <div class="actions">
+      <button class="ghost" id="speak">🔊 听一听</button>
+      <span class="stats" id="stats">0 / 0</span>
+      <button class="ghost" id="skip">跳过 →</button>
+    </div>
+  </div>
+
+  <footer>拼对了会自动朗读 · 回车提交</footer>
+
+<script>
+// 人教版 PEP 三年级上册常见词汇（按单元）
+const UNITS = [
+  {
+    name: "Unit 1 · Hello",
+    words: [
+      { en: "hello",  zh: "你好",   emoji: "👋" },
+      { en: "hi",     zh: "嗨",     emoji: "🙋" },
+      { en: "I",      zh: "我",     emoji: "🙂" },
+      { en: "am",     zh: "是",     emoji: "✨" },
+      { en: "ruler",  zh: "尺子",   emoji: "📏" },
+      { en: "pencil", zh: "铅笔",   emoji: "✏️" },
+      { en: "eraser", zh: "橡皮",   emoji: "🩹" },
+      { en: "crayon", zh: "蜡笔",   emoji: "🖍️" },
+      { en: "book",   zh: "书",     emoji: "📖" },
+      { en: "bag",    zh: "书包",   emoji: "🎒" },
+      { en: "pen",    zh: "钢笔",   emoji: "🖊️" },
+      { en: "school", zh: "学校",   emoji: "🏫" },
+    ],
+  },
+  {
+    name: "Unit 2 · Colours",
+    words: [
+      { en: "red",    zh: "红色",   emoji: "🟥" },
+      { en: "yellow", zh: "黄色",   emoji: "🟨" },
+      { en: "green",  zh: "绿色",   emoji: "🟩" },
+      { en: "blue",   zh: "蓝色",   emoji: "🟦" },
+      { en: "black",  zh: "黑色",   emoji: "⬛" },
+      { en: "white",  zh: "白色",   emoji: "⬜" },
+      { en: "pink",   zh: "粉色",   emoji: "🌸" },
+      { en: "purple", zh: "紫色",   emoji: "🟣" },
+      { en: "orange", zh: "橙色",   emoji: "🟧" },
+      { en: "brown",  zh: "棕色",   emoji: "🟫" },
+    ],
+  },
+  {
+    name: "Unit 3 · Look at me",
+    words: [
+      { en: "face",  zh: "脸",     emoji: "😊" },
+      { en: "ear",   zh: "耳朵",   emoji: "👂" },
+      { en: "eye",   zh: "眼睛",   emoji: "👁️" },
+      { en: "nose",  zh: "鼻子",   emoji: "👃" },
+      { en: "mouth", zh: "嘴",     emoji: "👄" },
+      { en: "arm",   zh: "胳膊",   emoji: "💪" },
+      { en: "hand",  zh: "手",     emoji: "✋" },
+      { en: "finger",zh: "手指",   emoji: "👆" },
+      { en: "leg",   zh: "腿",     emoji: "🦵" },
+      { en: "foot",  zh: "脚",     emoji: "🦶" },
+      { en: "body",  zh: "身体",   emoji: "🧍" },
+      { en: "head",  zh: "头",     emoji: "🗣️" },
+    ],
+  },
+  {
+    name: "Unit 4 · We love animals",
+    words: [
+      { en: "cat",      zh: "猫",     emoji: "🐱" },
+      { en: "dog",      zh: "狗",     emoji: "🐶" },
+      { en: "monkey",   zh: "猴子",   emoji: "🐵" },
+      { en: "panda",    zh: "熊猫",   emoji: "🐼" },
+      { en: "rabbit",   zh: "兔子",   emoji: "🐰" },
+      { en: "duck",     zh: "鸭子",   emoji: "🦆" },
+      { en: "pig",      zh: "猪",     emoji: "🐷" },
+      { en: "bird",     zh: "鸟",     emoji: "🐦" },
+      { en: "bear",     zh: "熊",     emoji: "🐻" },
+      { en: "elephant", zh: "大象",   emoji: "🐘" },
+      { en: "mouse",    zh: "老鼠",   emoji: "🐭" },
+      { en: "tiger",    zh: "老虎",   emoji: "🐯" },
+    ],
+  },
+  {
+    name: "Unit 5 · Let's eat",
+    words: [
+      { en: "cake",     zh: "蛋糕",   emoji: "🍰" },
+      { en: "bread",    zh: "面包",   emoji: "🍞" },
+      { en: "hamburger",zh: "汉堡包", emoji: "🍔" },
+      { en: "chicken",  zh: "鸡肉",   emoji: "🍗" },
+      { en: "hot dog",  zh: "热狗",   emoji: "🌭" },
+      { en: "french fries", zh: "薯条", emoji: "🍟" },
+      { en: "juice",    zh: "果汁",   emoji: "🧃" },
+      { en: "milk",     zh: "牛奶",   emoji: "🥛" },
+      { en: "water",    zh: "水",     emoji: "💧" },
+      { en: "tea",      zh: "茶",     emoji: "🍵" },
+      { en: "coffee",   zh: "咖啡",   emoji: "☕" },
+      { en: "egg",      zh: "鸡蛋",   emoji: "🥚" },
+      { en: "fish",     zh: "鱼",     emoji: "🐟" },
+      { en: "rice",     zh: "米饭",   emoji: "🍚" },
+    ],
+  },
+  {
+    name: "Unit 6 · Happy birthday",
+    words: [
+      { en: "one",   zh: "一", emoji: "1️⃣" },
+      { en: "two",   zh: "二", emoji: "2️⃣" },
+      { en: "three", zh: "三", emoji: "3️⃣" },
+      { en: "four",  zh: "四", emoji: "4️⃣" },
+      { en: "five",  zh: "五", emoji: "5️⃣" },
+      { en: "six",   zh: "六", emoji: "6️⃣" },
+      { en: "seven", zh: "七", emoji: "7️⃣" },
+      { en: "eight", zh: "八", emoji: "8️⃣" },
+      { en: "nine",  zh: "九", emoji: "9️⃣" },
+      { en: "ten",   zh: "十", emoji: "🔟" },
+      { en: "doll",  zh: "玩偶", emoji: "🪆" },
+      { en: "boat",  zh: "船",   emoji: "⛵" },
+      { en: "ball",  zh: "球",   emoji: "⚽" },
+      { en: "kite",  zh: "风筝", emoji: "🪁" },
+      { en: "balloon", zh: "气球", emoji: "🎈" },
+      { en: "car",   zh: "小汽车", emoji: "🚗" },
+      { en: "plane", zh: "飞机", emoji: "✈️" },
+    ],
+  },
+];
+
+const $ = (id) => document.getElementById(id);
+const unitsEl = $("units");
+const emojiEl = $("emoji");
+const meaningEl = $("meaning");
+const hintEl = $("hint");
+const inputEl = $("input");
+const submitEl = $("submit");
+const speakEl = $("speak");
+const skipEl = $("skip");
+const statsEl = $("stats");
+const answerEl = $("answer");
+
+let currentUnit = 0;
+let queue = [];
+let current = null;
+let correct = 0;
+let total = 0;
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function renderUnits() {
+  unitsEl.innerHTML = "";
+  UNITS.forEach((u, i) => {
+    const b = document.createElement("button");
+    b.className = "unit-btn" + (i === currentUnit ? " active" : "");
+    b.textContent = u.name;
+    b.onclick = () => { currentUnit = i; startUnit(); renderUnits(); };
+    unitsEl.appendChild(b);
+  });
+}
+
+function startUnit() {
+  queue = shuffle(UNITS[currentUnit].words);
+  correct = 0;
+  total = 0;
+  next();
+}
+
+function maskHint(word) {
+  // 显示首字母 + 长度提示，如 c _ _
+  return word.split("").map((c, i) => {
+    if (c === " ") return " ";
+    return i === 0 ? c : "_";
+  }).join(" ");
+}
+
+function next() {
+  answerEl.textContent = "";
+  answerEl.classList.remove("bad");
+  inputEl.value = "";
+  inputEl.classList.remove("shake", "good");
+  if (queue.length === 0) {
+    queue = shuffle(UNITS[currentUnit].words);
+  }
+  current = queue.shift();
+  emojiEl.textContent = current.emoji;
+  meaningEl.textContent = current.zh;
+  hintEl.textContent = maskHint(current.en);
+  updateStats();
+  inputEl.focus();
+}
+
+function updateStats() {
+  statsEl.textContent = `${correct} / ${total}`;
+}
+
+// 语音
+let voice = null;
+function pickVoice() {
+  const voices = speechSynthesis.getVoices();
+  voice = voices.find(v => /en[-_]US/i.test(v.lang) && /female|samantha|victoria|karen/i.test(v.name))
+       || voices.find(v => /en[-_]US/i.test(v.lang))
+       || voices.find(v => /^en/i.test(v.lang))
+       || voices[0] || null;
+}
+if (typeof speechSynthesis !== "undefined") {
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+}
+
+function speak(text) {
+  if (typeof speechSynthesis === "undefined") return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    u.rate = 0.85;
+    u.pitch = 1.05;
+    if (voice) u.voice = voice;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+function check() {
+  if (!current) return;
+  const val = inputEl.value.trim().toLowerCase();
+  if (!val) return;
+  total += 1;
+  if (val === current.en.toLowerCase()) {
+    correct += 1;
+    inputEl.classList.add("good");
+    answerEl.textContent = `✅ ${current.en} — ${current.zh}`;
+    answerEl.classList.remove("bad");
+    speak(current.en);
+    updateStats();
+    setTimeout(next, 1100);
+  } else {
+    inputEl.classList.remove("good");
+    inputEl.classList.add("shake");
+    answerEl.textContent = `再试一次～`;
+    answerEl.classList.add("bad");
+    setTimeout(() => inputEl.classList.remove("shake"), 400);
+    updateStats();
+  }
+}
+
+submitEl.addEventListener("click", check);
+inputEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") { e.preventDefault(); check(); }
+});
+speakEl.addEventListener("click", () => current && speak(current.en));
+skipEl.addEventListener("click", () => {
+  if (!current) return;
+  answerEl.textContent = `答案：${current.en} — ${current.zh}`;
+  answerEl.classList.remove("bad");
+  speak(current.en);
+  setTimeout(next, 1400);
+});
+
+renderUnits();
+startUnit();
+</script>
+</body>
+</html>
