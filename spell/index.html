@@ -164,7 +164,7 @@
 </style>
 </head>
 <body>
-  <h1>📚 学单词 · 课本词汇</h1>
+  <h1>📚 三年级下 · 课本词汇</h1>
   <div class="units" id="units"></div>
 
   <div class="card">
@@ -183,7 +183,7 @@
   <footer>拼对了会自动朗读 · 回车提交</footer>
 
 <script>
-// 课本词汇（按课本 Appendix 2 录入）
+// 三年级下 · 课本词汇（按课本 Appendix 2 录入）
 const UNITS = [
   {
     name: "Unit 1 · Where are you from",
@@ -236,6 +236,98 @@ const UNITS = [
       { en: "dance",   zh: "跳舞",                     emoji: "💃" },
       { en: "talk",    zh: "说话；讲话；谈话",         emoji: "🗣️" },
       { en: "face",    zh: "脸；面孔",                 emoji: "😊" },
+      { en: "all",     zh: "所有；全部",               emoji: "🌐" },
+      { en: "song",    zh: "歌；歌曲",                 emoji: "🎵" },
+      { en: "or",      zh: "或；或者；还是",           emoji: "🔀" },
+      { en: "so",      zh: "那么",                     emoji: "💫" },
+      { en: "much",    zh: "许多；大量",               emoji: "📚" },
+    ],
+  },
+  {
+    name: "Unit 3 · At school",
+    words: [
+      { en: "eraser",   zh: "橡皮",         emoji: "🧽" },
+      { en: "find",     zh: "找到；找回",   emoji: "🔍" },
+      { en: "ruler",    zh: "直尺",         emoji: "📏" },
+      { en: "pen",      zh: "钢笔",         emoji: "🖊️" },
+      { en: "pencil",   zh: "铅笔",         emoji: "✏️" },
+      { en: "book",     zh: "书；书籍",     emoji: "📖" },
+      { en: "bag",      zh: "包；袋",       emoji: "🎒" },
+      { en: "paper",    zh: "纸",           emoji: "📄" },
+      { en: "these",    zh: "这些",         emoji: "👉" },
+      { en: "see",      zh: "看见",         emoji: "👀" },
+      { en: "smell",    zh: "闻（气味）",   emoji: "👃" },
+      { en: "taste",    zh: "尝（味道）",   emoji: "👅" },
+      { en: "hear",     zh: "听见；听到",   emoji: "👂" },
+      { en: "touch",    zh: "触摸；碰",     emoji: "✋" },
+      { en: "nose",     zh: "鼻；鼻子",     emoji: "👃" },
+      { en: "tongue",   zh: "舌；舌头",     emoji: "👅" },
+      { en: "class",    zh: "课；班级",     emoji: "🏫" },
+      { en: "in class", zh: "在课堂上",     emoji: "📚" },
+      { en: "computer", zh: "计算机；电脑", emoji: "💻" },
+      { en: "learn",    zh: "学；学习",     emoji: "🎓" },
+    ],
+  },
+  {
+    name: "Unit 4 · Healthy food",
+    words: [
+      { en: "breakfast", zh: "早餐；早饭",         emoji: "🍳" },
+      { en: "time",      zh: "时间",               emoji: "⏰" },
+      { en: "bread",     zh: "面包",               emoji: "🍞" },
+      { en: "egg",       zh: "蛋；鸡蛋",           emoji: "🥚" },
+      { en: "milk",      zh: "奶；牛奶",           emoji: "🥛" },
+      { en: "noodle",    zh: "面条",               emoji: "🍜" },
+      { en: "juice",     zh: "果汁",               emoji: "🧃" },
+      { en: "rice",      zh: "大米",               emoji: "🍚" },
+      { en: "meat",      zh: "肉",                 emoji: "🥩" },
+      { en: "vegetable", zh: "蔬菜",               emoji: "🥦" },
+      { en: "healthy",   zh: "健康的",             emoji: "💪" },
+      { en: "plate",     zh: "盘子",               emoji: "🍽️" },
+      { en: "soup",      zh: "汤",                 emoji: "🍲" },
+      { en: "fruit",     zh: "水果",               emoji: "🍎" },
+      { en: "colourful", zh: "五彩缤纷的",         emoji: "🌈" },
+      { en: "candy",     zh: "糖果",               emoji: "🍬" },
+      { en: "yummy",     zh: "很好吃的",           emoji: "😋" },
+    ],
+  },
+  {
+    name: "Unit 5 · At home",
+    words: [
+      { en: "boat",  zh: "小船；舟",                 emoji: "⛵" },
+      { en: "cool",  zh: "酷的；绝妙的",             emoji: "😎" },
+      { en: "keep",  zh: "保有；留着",               emoji: "🤲" },
+      { en: "at",    zh: "在（某处）",               emoji: "📍" },
+      { en: "home",  zh: "家；住所",                 emoji: "🏠" },
+      { en: "ball",  zh: "球",                       emoji: "⚽" },
+      { en: "doll",  zh: "玩偶；玩具娃娃",           emoji: "🪆" },
+      { en: "car",   zh: "小汽车；轿车",             emoji: "🚗" },
+      { en: "on",    zh: "在……上",                   emoji: "⬆️" },
+      { en: "shelf", zh: "架子",                     emoji: "🪑" },
+      { en: "in",    zh: "在……内；在……中",          emoji: "📦" },
+      { en: "box",   zh: "盒子",                     emoji: "📦" },
+      { en: "cap",   zh: "帽子",                     emoji: "🧢" },
+      { en: "map",   zh: "地图",                     emoji: "🗺️" },
+      { en: "under", zh: "在……下面",                 emoji: "⬇️" },
+      { en: "still", zh: "还是；仍然",               emoji: "🕰️" },
+      { en: "put",   zh: "放；安置",                 emoji: "🤚" },
+    ],
+  },
+  {
+    name: "Unit 6 · Numbers",
+    words: [
+      { en: "eleven",     zh: "十一",       emoji: "1️⃣1️⃣" },
+      { en: "twelve",     zh: "十二",       emoji: "1️⃣2️⃣" },
+      { en: "thirteen",   zh: "十三",       emoji: "1️⃣3️⃣" },
+      { en: "fourteen",   zh: "十四",       emoji: "1️⃣4️⃣" },
+      { en: "fifteen",    zh: "十五",       emoji: "1️⃣5️⃣" },
+      { en: "sixteen",    zh: "十六",       emoji: "1️⃣6️⃣" },
+      { en: "seventeen",  zh: "十七",       emoji: "1️⃣7️⃣" },
+      { en: "eighteen",   zh: "十八",       emoji: "1️⃣8️⃣" },
+      { en: "nineteen",   zh: "十九",       emoji: "1️⃣9️⃣" },
+      { en: "twenty",     zh: "二十",       emoji: "2️⃣0️⃣" },
+      { en: "piggy bank", zh: "猪形储钱罐", emoji: "🐖" },
+      { en: "pay",        zh: "付费",       emoji: "💰" },
+      { en: "back",       zh: "回到原处",   emoji: "↩️" },
     ],
   },
 ];
