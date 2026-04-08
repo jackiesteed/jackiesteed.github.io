@@ -24,37 +24,86 @@
     color: var(--ink);
     -webkit-font-smoothing: antialiased;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 16px 40px;
+    min-height: 100vh;
   }
-  h1 {
-    margin: 6px 0 14px;
-    font-size: 22px;
-    letter-spacing: .5px;
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: rgba(255,255,255,.7);
+    backdrop-filter: blur(8px);
+    border-right: 1px solid #ffe2b8;
+    padding: 22px 14px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .sidebar h2 {
+    margin: 4px 8px 14px;
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
   }
   .units {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin-bottom: 16px;
-    max-width: 720px;
+    flex-direction: column;
+    gap: 6px;
   }
   .unit-btn {
-    border: 2px solid #ffd9a3;
-    background: #fff;
+    border: 2px solid transparent;
+    background: transparent;
     color: var(--ink);
-    border-radius: 999px;
-    padding: 6px 14px;
+    border-radius: 12px;
+    padding: 10px 14px;
     font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
     transition: all .15s ease;
+    text-align: left;
+    line-height: 1.35;
   }
+  .unit-btn:hover { background: #fff5e0; }
   .unit-btn.active {
     background: var(--accent);
     color: #fff;
     border-color: var(--accent);
+    box-shadow: 0 4px 14px rgba(255,159,67,.35);
+  }
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 20px 40px;
+  }
+  h1 {
+    margin: 6px 0 18px;
+    font-size: 22px;
+    letter-spacing: .5px;
+  }
+  @media (max-width: 640px) {
+    body { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: static;
+      border-right: none;
+      border-bottom: 1px solid #ffe2b8;
+      padding: 14px 12px;
+    }
+    .sidebar h2 { display: none; }
+    .units {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .unit-btn {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+    }
   }
   .card {
     background: var(--card);
@@ -164,23 +213,27 @@
 </style>
 </head>
 <body>
-  <h1>📚 三年级下 · 课本词汇</h1>
-  <div class="units" id="units"></div>
+  <aside class="sidebar">
+    <h2>三年级下</h2>
+    <div class="units" id="units"></div>
+  </aside>
 
-  <div class="card">
-    <div class="emoji" id="emoji">🐣</div>
-    <div class="meaning" id="meaning">准备好了吗？</div>
-    <div class="word" id="word">— — —</div>
-    <div class="boxes" id="boxes"></div>
-    <div class="answer" id="answer"></div>
-    <div class="actions">
-      <button class="ghost" id="speak">🔊 听一听</button>
-      <span class="stats" id="stats">0 / 0</span>
-      <button class="ghost" id="skip">跳过 →</button>
+  <main class="main">
+    <h1>📚 学单词</h1>
+    <div class="card">
+      <div class="emoji" id="emoji">🐣</div>
+      <div class="meaning" id="meaning">准备好了吗？</div>
+      <div class="word" id="word">— — —</div>
+      <div class="boxes" id="boxes"></div>
+      <div class="answer" id="answer"></div>
+      <div class="actions">
+        <button class="ghost" id="speak">🔊 听一听</button>
+        <span class="stats" id="stats">0 / 0</span>
+        <button class="ghost" id="skip">跳过 →</button>
+      </div>
     </div>
-  </div>
-
-  <footer>拼对了会自动朗读 · 回车提交</footer>
+    <footer>拼对了会自动朗读 · 回车提交</footer>
+  </main>
 
 <script>
 // 三年级下 · 课本词汇（按课本 Appendix 2 录入）
