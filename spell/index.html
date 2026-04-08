@@ -75,52 +75,54 @@
     font-weight: 600;
     margin: 6px 0 2px;
   }
-  .hint {
-    color: var(--muted);
-    font-size: 14px;
-    margin-bottom: 16px;
-    min-height: 20px;
-    letter-spacing: 6px;
+  .word {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin: 6px 0 14px;
+    color: var(--ink);
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
   }
-  .input-row {
+  .boxes {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
+    justify-content: center;
     margin-top: 6px;
   }
-  input[type="text"] {
-    flex: 1;
-    font-size: 22px;
-    padding: 12px 14px;
-    border-radius: 14px;
+  .boxes.shake { animation: shake .35s; }
+  .box {
+    width: 44px;
+    height: 54px;
+    border-radius: 12px;
     border: 2px solid #eee;
-    outline: none;
+    background: #fff;
+    font-size: 26px;
+    font-weight: 600;
     text-align: center;
-    letter-spacing: 4px;
     text-transform: lowercase;
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    transition: border-color .15s;
+    color: var(--ink);
+    outline: none;
+    padding: 0;
+    transition: all .15s;
   }
-  input[type="text"]:focus { border-color: var(--accent); }
-  input.shake { animation: shake .35s; border-color: var(--bad); }
-  input.good { border-color: var(--good); }
+  .box:focus { border-color: var(--accent); transform: translateY(-2px); }
+  .box.filled { border-color: #ffd9a3; background: #fff8ec; }
+  .box.good { border-color: var(--good); background: #e9f9ee; color: var(--good); }
+  .box.bad { border-color: var(--bad); background: #fdecea; color: var(--bad); }
+  .box.space {
+    border: none;
+    background: transparent;
+    width: 14px;
+    pointer-events: none;
+  }
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-6px); }
     50% { transform: translateX(6px); }
     75% { transform: translateX(-4px); }
   }
-  button.primary {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 14px;
-    padding: 0 18px;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  button.primary:active { transform: scale(.97); }
   .actions {
     display: flex;
     justify-content: space-between;
@@ -164,11 +166,8 @@
   <div class="card">
     <div class="emoji" id="emoji">🐣</div>
     <div class="meaning" id="meaning">准备好了吗？</div>
-    <div class="hint" id="hint">— — —</div>
-    <div class="input-row">
-      <input id="input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="在这里拼写…" />
-      <button class="primary" id="submit">确认</button>
-    </div>
+    <div class="word" id="word">— — —</div>
+    <div class="boxes" id="boxes"></div>
     <div class="answer" id="answer"></div>
     <div class="actions">
       <button class="ghost" id="speak">🔊 听一听</button>
@@ -295,9 +294,8 @@ const $ = (id) => document.getElementById(id);
 const unitsEl = $("units");
 const emojiEl = $("emoji");
 const meaningEl = $("meaning");
-const hintEl = $("hint");
-const inputEl = $("input");
-const submitEl = $("submit");
+const wordEl = $("word");
+const boxesEl = $("boxes");
 const speakEl = $("speak");
 const skipEl = $("skip");
 const statsEl = $("stats");
@@ -308,6 +306,8 @@ let queue = [];
 let current = null;
 let correct = 0;
 let total = 0;
+let boxInputs = [];   // input elements (excluding spaces)
+let wrongOnce = false;
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -336,28 +336,132 @@ function startUnit() {
   next();
 }
 
-function maskHint(word) {
-  // 显示首字母 + 长度提示，如 c _ _
-  return word.split("").map((c, i) => {
-    if (c === " ") return " ";
-    return i === 0 ? c : "_";
-  }).join(" ");
+function buildBoxes(word) {
+  boxesEl.innerHTML = "";
+  boxInputs = [];
+  const chars = word.split("");
+  chars.forEach((ch, idx) => {
+    if (ch === " ") {
+      const sp = document.createElement("div");
+      sp.className = "box space";
+      boxesEl.appendChild(sp);
+      return;
+    }
+    const inp = document.createElement("input");
+    inp.type = "text";
+    inp.className = "box";
+    inp.maxLength = 1;
+    inp.autocomplete = "off";
+    inp.autocapitalize = "off";
+    inp.spellcheck = false;
+    inp.dataset.idx = boxInputs.length;
+    inp.dataset.expect = ch.toLowerCase();
+    inp.addEventListener("input", onBoxInput);
+    inp.addEventListener("keydown", onBoxKey);
+    inp.addEventListener("focus", () => inp.select());
+    boxesEl.appendChild(inp);
+    boxInputs.push(inp);
+  });
+}
+
+function onBoxInput(e) {
+  const inp = e.target;
+  let v = inp.value.toLowerCase();
+  // 取最后一个字母字符
+  v = v.replace(/[^a-z]/g, "");
+  if (v.length > 1) v = v.slice(-1);
+  inp.value = v;
+  if (v) {
+    inp.classList.add("filled");
+    const i = parseInt(inp.dataset.idx, 10);
+    if (i + 1 < boxInputs.length) {
+      boxInputs[i + 1].focus();
+    } else {
+      // 最后一个填完了，检查
+      checkAll();
+    }
+  } else {
+    inp.classList.remove("filled");
+  }
+}
+
+function onBoxKey(e) {
+  const inp = e.target;
+  const i = parseInt(inp.dataset.idx, 10);
+  if (e.key === "Backspace" && !inp.value && i > 0) {
+    e.preventDefault();
+    const prev = boxInputs[i - 1];
+    prev.value = "";
+    prev.classList.remove("filled", "good", "bad");
+    prev.focus();
+  } else if (e.key === "ArrowLeft" && i > 0) {
+    e.preventDefault();
+    boxInputs[i - 1].focus();
+  } else if (e.key === "ArrowRight" && i + 1 < boxInputs.length) {
+    e.preventDefault();
+    boxInputs[i + 1].focus();
+  } else if (e.key === "Enter") {
+    e.preventDefault();
+    checkAll();
+  }
+}
+
+function checkAll() {
+  if (!current) return;
+  const typed = boxInputs.map(b => b.value.toLowerCase()).join("");
+  const expect = current.en.replace(/ /g, "").toLowerCase();
+  if (typed.length < expect.length) return;
+  total += 1;
+  if (typed === expect) {
+    correct += 1;
+    boxInputs.forEach(b => { b.classList.remove("bad", "filled"); b.classList.add("good"); });
+    answerEl.textContent = `✅ 太棒了！ ${current.en} — ${current.zh}`;
+    answerEl.classList.remove("bad");
+    speak(current.en);
+    updateStats();
+    setTimeout(next, 1300);
+  } else {
+    // 标红错的格子
+    boxInputs.forEach((b, i) => {
+      if (b.value.toLowerCase() === expect[i]) {
+        b.classList.add("good");
+        b.classList.remove("bad");
+      } else {
+        b.classList.add("bad");
+        b.classList.remove("good");
+      }
+    });
+    boxesEl.classList.add("shake");
+    setTimeout(() => boxesEl.classList.remove("shake"), 400);
+    answerEl.textContent = `再试一次～`;
+    answerEl.classList.add("bad");
+    // 清空错的，焦点回到第一个错的
+    let firstWrong = -1;
+    boxInputs.forEach((b, i) => {
+      if (b.value.toLowerCase() !== expect[i]) {
+        b.value = "";
+        b.classList.remove("filled", "good", "bad");
+        if (firstWrong === -1) firstWrong = i;
+      }
+    });
+    if (firstWrong >= 0) boxInputs[firstWrong].focus();
+    updateStats();
+  }
 }
 
 function next() {
   answerEl.textContent = "";
   answerEl.classList.remove("bad");
-  inputEl.value = "";
-  inputEl.classList.remove("shake", "good");
   if (queue.length === 0) {
     queue = shuffle(UNITS[currentUnit].words);
   }
   current = queue.shift();
   emojiEl.textContent = current.emoji;
   meaningEl.textContent = current.zh;
-  hintEl.textContent = maskHint(current.en);
+  wordEl.textContent = current.en;
+  buildBoxes(current.en);
   updateStats();
-  inputEl.focus();
+  if (boxInputs[0]) boxInputs[0].focus();
 }
 
 function updateStats() {
@@ -391,40 +495,11 @@ function speak(text) {
   } catch (e) {}
 }
 
-function check() {
-  if (!current) return;
-  const val = inputEl.value.trim().toLowerCase();
-  if (!val) return;
-  total += 1;
-  if (val === current.en.toLowerCase()) {
-    correct += 1;
-    inputEl.classList.add("good");
-    answerEl.textContent = `✅ ${current.en} — ${current.zh}`;
-    answerEl.classList.remove("bad");
-    speak(current.en);
-    updateStats();
-    setTimeout(next, 1100);
-  } else {
-    inputEl.classList.remove("good");
-    inputEl.classList.add("shake");
-    answerEl.textContent = `再试一次～`;
-    answerEl.classList.add("bad");
-    setTimeout(() => inputEl.classList.remove("shake"), 400);
-    updateStats();
-  }
-}
-
-submitEl.addEventListener("click", check);
-inputEl.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") { e.preventDefault(); check(); }
-});
 speakEl.addEventListener("click", () => current && speak(current.en));
 skipEl.addEventListener("click", () => {
   if (!current) return;
-  answerEl.textContent = `答案：${current.en} — ${current.zh}`;
-  answerEl.classList.remove("bad");
   speak(current.en);
-  setTimeout(next, 1400);
+  setTimeout(next, 600);
 });
 
 renderUnits();
