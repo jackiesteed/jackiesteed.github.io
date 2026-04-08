@@ -172,18 +172,62 @@
     letter-spacing: .5px;
   }
   .progress-pill {
-    background: rgba(255,255,255,.7);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: min(520px, 100%);
+    background: rgba(255,255,255,.86);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,.8);
-    padding: 8px 16px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 600;
+    padding: 12px 16px;
+    border-radius: 22px;
+    font-size: 15px;
+    font-weight: 800;
     color: var(--ink);
     pointer-events: auto;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 14px 30px rgba(140, 110, 200, .16);
+    margin: 0 0 16px;
   }
-  .progress-pill .ok { color: var(--good); }
+  .progress-pill::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: var(--progress, 0%);
+    background: linear-gradient(135deg, rgba(54, 211, 153, .18), rgba(92, 210, 255, .18));
+    transition: width .35s ease;
+  }
+  .progress-mascot,
+  .progress-copy {
+    position: relative;
+    z-index: 1;
+  }
+  .progress-mascot {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #fff4ce, #ffe0ef);
+    font-size: 28px;
+    box-shadow: 0 8px 18px rgba(255, 126, 179, .18);
+  }
+  .progress-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+  }
+  .progress-label {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: .8px;
+  }
+  .progress-pill .ok { color: var(--good); font-size: 20px; }
+  .progress-pill .total { color: var(--accent-2); font-size: 20px; }
 
   @media (max-width: 480px) {
     .sidebar {
@@ -197,6 +241,7 @@
     .topbar { left: 16px; right: 16px; top: 16px; }
     .topbar h1 { font-size: 15px; }
     .main { padding: 18px 10px 30px; }
+    .progress-pill { min-width: 0; width: calc((100vw - 130px) * .86); }
   }
 
   /* === card === */
@@ -575,7 +620,13 @@
   <main class="main">
     <div class="topbar">
       <h1>✨ 跟着课本练拼写</h1>
-      <div class="progress-pill"><span class="ok" id="stats">0</span> / <span id="statsTotal">0</span> 答对</div>
+    </div>
+    <div class="progress-pill" id="progressPill">
+      <span class="progress-mascot" id="progressMascot">🐣</span>
+      <span class="progress-copy">
+        <span class="progress-label">本章进度</span>
+        <span>打对 <span class="ok" id="stats">0</span> 个 / 总共 <span class="total" id="statsTotal">0</span> 个</span>
+      </span>
     </div>
     <div class="card" id="card">
       <div class="egg-layer" id="eggLayer"></div>
@@ -622,7 +673,7 @@ const UNITS = [
       { en: "boy",       zh: "男孩",                 emoji: "👦" },
       { en: "woman",     zh: "成年女子；妇女",       emoji: "👩" },
       { en: "man",       zh: "成年男子；男人",       emoji: "👨" },
-      { en: "Mr",        zh: "先生",                 emoji: "🎩" },
+      { en: "Mr",        zh: "先生",                 emoji: "🎩", say: "mister" },
       { en: "classmate", zh: "同班同学",             emoji: "👫" },
       { en: "he",        zh: "他",                   emoji: "🙋‍♂️" },
       { en: "also",      zh: "也",                   emoji: "➕" },
@@ -761,6 +812,8 @@ const wordEl = $("word");
 const boxesEl = $("boxes");
 const speakEl = $("speak");
 const skipEl = $("skip");
+const progressPillEl = $("progressPill");
+const progressMascotEl = $("progressMascot");
 const statsEl = $("stats");
 const statsTotalEl = $("statsTotal");
 const answerEl = $("answer");
@@ -808,7 +861,7 @@ function renderUnits() {
 }
 
 function startUnit() {
-  queue = shuffle(UNITS[currentUnit].words);
+  queue = shuffle(remainingWordsForUnit(currentUnit));
   streak = 0;
   next();
 }
@@ -819,6 +872,19 @@ function wordKey(word) {
 
 function currentProgress() {
   return unitProgress[currentUnit];
+}
+
+function remainingWordsForUnit(unitIndex) {
+  const progress = unitProgress[unitIndex];
+  return UNITS[unitIndex].words.filter(word => !progress.completed.has(wordKey(word.en)));
+}
+
+function currentUnitTotal() {
+  return UNITS[currentUnit].words.length;
+}
+
+function currentCompletedCount() {
+  return currentProgress().completed.size;
 }
 
 function buildBoxes(word) {
@@ -904,7 +970,7 @@ function checkAll() {
     boxEls.forEach(b => { b.classList.remove("bad", "filled", "cursor"); b.classList.add("good"); });
     answerEl.textContent = `太棒了！ ${current.en} — ${current.zh}`;
     answerEl.classList.remove("bad");
-    speak(current.en);
+    speakWord(current);
     updateStats();
     celebrate(current.en, streak);
     maybeShowChapterComplete();
@@ -944,7 +1010,11 @@ function next() {
   answerEl.textContent = "";
   answerEl.classList.remove("bad");
   if (queue.length === 0) {
-    queue = shuffle(UNITS[currentUnit].words);
+    queue = shuffle(remainingWordsForUnit(currentUnit));
+  }
+  if (queue.length === 0) {
+    showUnitCompleteScreen();
+    return;
   }
   current = queue.shift();
   emojiEl.textContent = current.emoji;
@@ -955,8 +1025,27 @@ function next() {
 }
 
 function updateStats() {
-  statsEl.textContent = currentProgress().completed.size;
-  statsTotalEl.textContent = UNITS[currentUnit].words.length;
+  const completed = currentCompletedCount();
+  const total = currentUnitTotal();
+  const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+  statsEl.textContent = completed;
+  statsTotalEl.textContent = total;
+  progressPillEl.style.setProperty("--progress", `${percent}%`);
+  progressMascotEl.textContent = completed >= total ? "🏆" : completed > 0 ? "🌟" : "🐣";
+}
+
+function showUnitCompleteScreen() {
+  current = null;
+  locked = false;
+  typed = [];
+  boxEls = [];
+  emojiEl.textContent = "🏆";
+  meaningEl.textContent = "本章完成！";
+  wordEl.textContent = "Great job";
+  boxesEl.innerHTML = "";
+  answerEl.textContent = `你已经打对本章全部 ${currentUnitTotal()} 个单词。`;
+  answerEl.classList.remove("bad");
+  updateStats();
 }
 
 function maybeShowChapterComplete() {
@@ -1003,6 +1092,10 @@ function speak(text) {
     if (voice) u.voice = voice;
     speechSynthesis.speak(u);
   } catch (e) {}
+}
+
+function speakWord(word) {
+  speak(word.say || word.en);
 }
 
 // === 彩蛋：confetti + 成功徽章 + chime ===
@@ -1160,10 +1253,10 @@ function celebrate(word, streakCount) {
 }
 
 document.addEventListener("keydown", handleKey);
-speakEl.addEventListener("click", () => current && speak(current.en));
+speakEl.addEventListener("click", () => current && speakWord(current));
 skipEl.addEventListener("click", () => {
   if (!current) return;
-  speak(current.en);
+  speakWord(current);
   setTimeout(next, 400);
 });
 chapterCloseEl.addEventListener("click", closeChapterModal);
