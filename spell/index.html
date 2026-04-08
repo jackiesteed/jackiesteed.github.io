@@ -35,6 +35,35 @@
     background: var(--bg);
     overflow-x: hidden;
   }
+  body.menu-open { overflow: hidden; }
+
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    left: 14px;
+    top: 14px;
+    z-index: 1200;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 10px 14px;
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: var(--shadow-md);
+  }
+
+  .menu-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1090;
+    background: rgba(46, 114, 114, .18);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+  }
 
   /* === sidebar === */
   .sidebar {
@@ -50,6 +79,7 @@
     height: 100vh;
     overflow-y: auto;
     box-shadow: 4px 0 24px rgba(46, 114, 114, .06);
+    z-index: 1100;
   }
   .brand {
     display: flex;
@@ -224,19 +254,40 @@
   .progress-pill .ok { color: var(--good); font-size: 20px; }
   .progress-pill .total { color: var(--accent-2); font-size: 20px; }
 
-  @media (max-width: 480px) {
-    .sidebar {
-      width: 130px;
-      padding: 16px 8px;
+  @media (max-width: 640px) {
+    body { display: block; }
+    .menu-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
+    .menu-backdrop { display: block; }
+    body.menu-open .menu-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: min(280px, 84vw);
+      padding: 72px 14px 16px;
+      transform: translateX(-100%);
+      transition: transform .22s ease;
+    }
+    body.menu-open .sidebar { transform: translateX(0); }
     .brand-title { font-size: 13px; }
-    .brand-sub { display: none; }
+    .brand-sub { display: block; }
     .unit-btn { padding: 9px 8px; }
-    .unit-name { font-size: 11px; }
-    .topbar { left: 16px; right: 16px; top: 16px; }
+    .unit-name { font-size: 13px; }
+    .topbar { left: 72px; right: 16px; top: 18px; }
     .topbar h1 { font-size: 15px; }
-    .main { padding: 18px 10px 30px; }
-    .progress-pill { min-width: 0; width: calc((100vw - 130px) * .86); }
+    .main {
+      min-height: 100vh;
+      min-height: 100svh;
+      padding: 70px 14px 24px;
+    }
+    .progress-pill { min-width: 0; width: 100%; max-width: 520px; }
   }
 
   /* === card === */
@@ -360,6 +411,21 @@
     background: transparent;
     width: 14px;
     box-shadow: none;
+  }
+  .typing-input {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 1px;
+    height: 1px;
+    opacity: .01;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: transparent;
+    caret-color: transparent;
+    font-size: 16px;
+    pointer-events: none;
   }
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
@@ -580,10 +646,23 @@
     cursor: pointer;
     box-shadow: 0 12px 28px rgba(46, 114, 114, .22);
   }
+  @media (max-width: 640px) {
+    .card {
+      width: 100%;
+      min-width: 0;
+      height: auto;
+      min-height: calc(100vh - 190px);
+      min-height: calc(100svh - 190px);
+      border-radius: 28px;
+      padding: 32px 14px;
+    }
+  }
 </style>
 </head>
 <body>
   <canvas id="confetti"></canvas>
+  <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="units">单元</button>
+  <div class="menu-backdrop" id="menuBackdrop"></div>
 
   <aside class="sidebar">
     <div class="brand">
@@ -622,6 +701,17 @@
         <button class="ghost" id="skip">跳过 →</button>
       </div>
     </div>
+    <input
+      class="typing-input"
+      id="typingInput"
+      type="text"
+      inputmode="text"
+      autocomplete="off"
+      autocapitalize="none"
+      autocorrect="off"
+      spellcheck="false"
+      aria-label="输入单词字母"
+    />
     <footer>键盘输入 · 拼对自动朗读 + 彩蛋 🎊</footer>
   </main>
 
@@ -792,6 +882,9 @@ const wordEl = $("word");
 const boxesEl = $("boxes");
 const speakEl = $("speak");
 const skipEl = $("skip");
+const menuToggleEl = $("menuToggle");
+const menuBackdropEl = $("menuBackdrop");
+const typingInputEl = $("typingInput");
 const progressPillEl = $("progressPill");
 const progressMascotEl = $("progressMascot");
 const statsEl = $("stats");
@@ -835,7 +928,14 @@ function renderUnits() {
     const parts = u.name.split("·");
     const subtitle = (parts[1] || u.name).trim();
     b.innerHTML = `<span class="unit-num">${i + 1}</span><span class="unit-name">${subtitle}</span>`;
-    b.onclick = () => { closeChapterModal(); currentUnit = i; startUnit(); renderUnits(); };
+    b.onclick = () => {
+      closeMenu();
+      closeChapterModal();
+      currentUnit = i;
+      startUnit();
+      renderUnits();
+      focusTypingInput();
+    };
     unitsEl.appendChild(b);
   });
 }
@@ -908,6 +1008,31 @@ function renderTyped() {
   updateCursor();
 }
 
+function canType() {
+  if (chapterModalEl.classList.contains("show")) {
+    return false;
+  }
+  return !locked && !!current;
+}
+
+function typeLetter(letter) {
+  if (!canType() || typed.length >= boxEls.length) return;
+  typed.push(letter.toLowerCase());
+  renderTyped();
+  if (typed.length === boxEls.length) checkAll();
+}
+
+function eraseLetter() {
+  if (!canType() || typed.length === 0) return;
+  typed.pop();
+  renderTyped();
+}
+
+function submitTyped() {
+  if (!canType() || typed.length !== boxEls.length) return;
+  checkAll();
+}
+
 function handleKey(e) {
   if (chapterModalEl.classList.contains("show")) {
     if (e.key === "Enter" || e.key === "Escape") {
@@ -916,27 +1041,28 @@ function handleKey(e) {
     }
     return;
   }
-  if (locked || !current) return;
+  if (e.target === typingInputEl && /^[a-zA-Z]$/.test(e.key)) return;
+  if (!canType()) return;
   // 忽略修饰键组合
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const key = e.key;
   if (/^[a-zA-Z]$/.test(key)) {
-    if (typed.length < boxEls.length) {
-      typed.push(key.toLowerCase());
-      renderTyped();
-      if (typed.length === boxEls.length) checkAll();
-    }
+    typeLetter(key);
     e.preventDefault();
   } else if (key === "Backspace") {
-    if (typed.length > 0) {
-      typed.pop();
-      renderTyped();
-    }
+    eraseLetter();
     e.preventDefault();
   } else if (key === "Enter") {
-    if (typed.length === boxEls.length) checkAll();
+    submitTyped();
     e.preventDefault();
   }
+}
+
+function handleTextInput(e) {
+  const value = e.target.value;
+  e.target.value = "";
+  if (!value) return;
+  value.replace(/[^a-zA-Z]/g, "").split("").forEach(typeLetter);
 }
 
 function checkAll() {
@@ -1045,6 +1171,29 @@ function maybeShowChapterComplete() {
 
 function closeChapterModal() {
   chapterModalEl.classList.remove("show");
+  focusTypingInput();
+}
+
+function setMenuOpen(open) {
+  document.body.classList.toggle("menu-open", open);
+  menuToggleEl.setAttribute("aria-expanded", String(open));
+}
+
+function closeMenu() {
+  setMenuOpen(false);
+}
+
+function toggleMenu() {
+  setMenuOpen(!document.body.classList.contains("menu-open"));
+}
+
+function focusTypingInput() {
+  if (chapterModalEl.classList.contains("show")) return;
+  try {
+    typingInputEl.focus({ preventScroll: true });
+  } catch (e) {
+    typingInputEl.focus();
+  }
 }
 
 // 语音
@@ -1233,10 +1382,16 @@ function celebrate(word, streakCount) {
 }
 
 document.addEventListener("keydown", handleKey);
+typingInputEl.addEventListener("input", handleTextInput);
+cardEl.addEventListener("pointerdown", focusTypingInput);
+progressPillEl.addEventListener("pointerdown", focusTypingInput);
+menuToggleEl.addEventListener("click", toggleMenu);
+menuBackdropEl.addEventListener("click", closeMenu);
 speakEl.addEventListener("click", () => current && speakWord(current));
 skipEl.addEventListener("click", () => {
   if (!current) return;
   speakWord(current);
+  focusTypingInput();
   setTimeout(next, 400);
 });
 chapterCloseEl.addEventListener("click", closeChapterModal);
