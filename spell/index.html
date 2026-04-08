@@ -97,17 +97,22 @@
     border-radius: 12px;
     border: 2px solid #eee;
     background: #fff;
-    font-size: 26px;
-    font-weight: 600;
-    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-transform: lowercase;
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
     color: var(--ink);
-    outline: none;
-    padding: 0;
     transition: all .15s;
+    user-select: none;
   }
-  .box:focus { border-color: var(--accent); transform: translateY(-2px); }
+  .box.cursor {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(255,159,67,.18);
+    transform: translateY(-2px);
+  }
   .box.filled { border-color: #ffd9a3; background: #fff8ec; }
   .box.good { border-color: var(--good); background: #e9f9ee; color: var(--good); }
   .box.bad { border-color: var(--bad); background: #fdecea; color: var(--bad); }
@@ -115,7 +120,6 @@
     border: none;
     background: transparent;
     width: 14px;
-    pointer-events: none;
   }
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
@@ -306,8 +310,9 @@ let queue = [];
 let current = null;
 let correct = 0;
 let total = 0;
-let boxInputs = [];   // input elements (excluding spaces)
-let wrongOnce = false;
+let boxEls = [];       // box div elements (excluding spaces)
+let typed = [];        // typed letters (length === boxEls.length when full)
+let locked = false;    // lock input briefly after correct/incorrect
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -338,92 +343,86 @@ function startUnit() {
 
 function buildBoxes(word) {
   boxesEl.innerHTML = "";
-  boxInputs = [];
-  const chars = word.split("");
-  chars.forEach((ch, idx) => {
+  boxEls = [];
+  typed = [];
+  word.split("").forEach((ch) => {
     if (ch === " ") {
       const sp = document.createElement("div");
       sp.className = "box space";
       boxesEl.appendChild(sp);
       return;
     }
-    const inp = document.createElement("input");
-    inp.type = "text";
-    inp.className = "box";
-    inp.maxLength = 1;
-    inp.autocomplete = "off";
-    inp.autocapitalize = "off";
-    inp.spellcheck = false;
-    inp.dataset.idx = boxInputs.length;
-    inp.dataset.expect = ch.toLowerCase();
-    inp.addEventListener("input", onBoxInput);
-    inp.addEventListener("keydown", onBoxKey);
-    inp.addEventListener("focus", () => inp.select());
-    boxesEl.appendChild(inp);
-    boxInputs.push(inp);
+    const div = document.createElement("div");
+    div.className = "box";
+    div.dataset.expect = ch.toLowerCase();
+    boxesEl.appendChild(div);
+    boxEls.push(div);
+  });
+  updateCursor();
+}
+
+function updateCursor() {
+  boxEls.forEach((b, i) => {
+    b.classList.remove("cursor");
+    if (i === typed.length) b.classList.add("cursor");
   });
 }
 
-function onBoxInput(e) {
-  const inp = e.target;
-  let v = inp.value.toLowerCase();
-  // 取最后一个字母字符
-  v = v.replace(/[^a-z]/g, "");
-  if (v.length > 1) v = v.slice(-1);
-  inp.value = v;
-  if (v) {
-    inp.classList.add("filled");
-    const i = parseInt(inp.dataset.idx, 10);
-    if (i + 1 < boxInputs.length) {
-      boxInputs[i + 1].focus();
+function renderTyped() {
+  boxEls.forEach((b, i) => {
+    if (i < typed.length) {
+      b.textContent = typed[i];
+      b.classList.add("filled");
     } else {
-      // 最后一个填完了，检查
-      checkAll();
+      b.textContent = "";
+      b.classList.remove("filled");
     }
-  } else {
-    inp.classList.remove("filled");
-  }
+    b.classList.remove("good", "bad");
+  });
+  updateCursor();
 }
 
-function onBoxKey(e) {
-  const inp = e.target;
-  const i = parseInt(inp.dataset.idx, 10);
-  if (e.key === "Backspace" && !inp.value && i > 0) {
+function handleKey(e) {
+  if (locked || !current) return;
+  // 忽略修饰键组合
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const key = e.key;
+  if (/^[a-zA-Z]$/.test(key)) {
+    if (typed.length < boxEls.length) {
+      typed.push(key.toLowerCase());
+      renderTyped();
+      if (typed.length === boxEls.length) checkAll();
+    }
     e.preventDefault();
-    const prev = boxInputs[i - 1];
-    prev.value = "";
-    prev.classList.remove("filled", "good", "bad");
-    prev.focus();
-  } else if (e.key === "ArrowLeft" && i > 0) {
+  } else if (key === "Backspace") {
+    if (typed.length > 0) {
+      typed.pop();
+      renderTyped();
+    }
     e.preventDefault();
-    boxInputs[i - 1].focus();
-  } else if (e.key === "ArrowRight" && i + 1 < boxInputs.length) {
+  } else if (key === "Enter") {
+    if (typed.length === boxEls.length) checkAll();
     e.preventDefault();
-    boxInputs[i + 1].focus();
-  } else if (e.key === "Enter") {
-    e.preventDefault();
-    checkAll();
   }
 }
 
 function checkAll() {
   if (!current) return;
-  const typed = boxInputs.map(b => b.value.toLowerCase()).join("");
+  const got = typed.join("");
   const expect = current.en.replace(/ /g, "").toLowerCase();
-  if (typed.length < expect.length) return;
   total += 1;
-  if (typed === expect) {
+  if (got === expect) {
     correct += 1;
-    boxInputs.forEach(b => { b.classList.remove("bad", "filled"); b.classList.add("good"); });
+    boxEls.forEach(b => { b.classList.remove("bad", "filled", "cursor"); b.classList.add("good"); });
     answerEl.textContent = `✅ 太棒了！ ${current.en} — ${current.zh}`;
     answerEl.classList.remove("bad");
     speak(current.en);
     updateStats();
-    setTimeout(next, 1300);
+    locked = true;
+    setTimeout(() => { locked = false; next(); }, 1300);
   } else {
-    // 标红错的格子
-    boxInputs.forEach((b, i) => {
-      if (b.value.toLowerCase() === expect[i]) {
+    boxEls.forEach((b, i) => {
+      if ((typed[i] || "") === expect[i]) {
         b.classList.add("good");
         b.classList.remove("bad");
       } else {
@@ -435,16 +434,17 @@ function checkAll() {
     setTimeout(() => boxesEl.classList.remove("shake"), 400);
     answerEl.textContent = `再试一次～`;
     answerEl.classList.add("bad");
-    // 清空错的，焦点回到第一个错的
-    let firstWrong = -1;
-    boxInputs.forEach((b, i) => {
-      if (b.value.toLowerCase() !== expect[i]) {
-        b.value = "";
-        b.classList.remove("filled", "good", "bad");
-        if (firstWrong === -1) firstWrong = i;
+    // 保留对的，清掉错的
+    const newTyped = [];
+    for (let i = 0; i < boxEls.length; i++) {
+      if ((typed[i] || "") === expect[i]) {
+        newTyped.push(typed[i]);
+      } else {
+        break;
       }
-    });
-    if (firstWrong >= 0) boxInputs[firstWrong].focus();
+    }
+    typed = newTyped;
+    setTimeout(() => { renderTyped(); }, 450);
     updateStats();
   }
 }
@@ -461,7 +461,6 @@ function next() {
   wordEl.textContent = current.en;
   buildBoxes(current.en);
   updateStats();
-  if (boxInputs[0]) boxInputs[0].focus();
 }
 
 function updateStats() {
@@ -495,11 +494,12 @@ function speak(text) {
   } catch (e) {}
 }
 
+document.addEventListener("keydown", handleKey);
 speakEl.addEventListener("click", () => current && speak(current.en));
 skipEl.addEventListener("click", () => {
   if (!current) return;
   speak(current.en);
-  setTimeout(next, 600);
+  setTimeout(next, 400);
 });
 
 renderUnits();
