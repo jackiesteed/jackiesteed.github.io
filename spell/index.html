@@ -27,12 +27,12 @@
     min-height: 100vh;
   }
   .sidebar {
-    width: 220px;
+    width: 180px;
     flex-shrink: 0;
     background: rgba(255,255,255,.7);
     backdrop-filter: blur(8px);
     border-right: 1px solid #ffe2b8;
-    padding: 22px 14px;
+    padding: 18px 10px;
     position: sticky;
     top: 0;
     height: 100vh;
@@ -83,27 +83,17 @@
     font-size: 22px;
     letter-spacing: .5px;
   }
-  @media (max-width: 640px) {
-    body { flex-direction: column; }
+  @media (max-width: 480px) {
     .sidebar {
-      width: 100%;
-      height: auto;
-      position: static;
-      border-right: none;
-      border-bottom: 1px solid #ffe2b8;
-      padding: 14px 12px;
+      width: 120px;
+      padding: 14px 6px;
     }
-    .sidebar h2 { display: none; }
-    .units {
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
+    .sidebar h2 { font-size: 12px; margin: 4px 4px 10px; }
     .unit-btn {
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 13px;
+      padding: 8px 8px;
+      font-size: 12px;
     }
+    .main { padding: 18px 10px 30px; }
   }
   .card {
     background: var(--card);
