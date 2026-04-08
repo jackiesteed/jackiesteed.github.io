@@ -495,6 +495,66 @@
     70%  { opacity: 1; transform: translateY(0) scale(1); }
     100% { opacity: 0; transform: translateY(-18px) scale(.95); }
   }
+  .chapter-modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(45, 42, 74, .25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .22s ease;
+    z-index: 10000;
+  }
+  .chapter-modal.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .chapter-dialog {
+    width: min(420px, 100%);
+    border-radius: 28px;
+    padding: 34px 28px 28px;
+    text-align: center;
+    background: rgba(255,255,255,.94);
+    border: 1px solid rgba(255,255,255,.95);
+    box-shadow: 0 30px 80px rgba(45, 42, 74, .24);
+    transform: translateY(16px) scale(.94);
+    transition: transform .22s cubic-bezier(.2, .8, .3, 1.2);
+  }
+  .chapter-modal.show .chapter-dialog {
+    transform: translateY(0) scale(1);
+  }
+  .chapter-icon {
+    font-size: 70px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .chapter-title {
+    margin: 0 0 10px;
+    font-size: 28px;
+    color: var(--ink);
+  }
+  .chapter-text {
+    margin: 0 0 24px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .chapter-action {
+    border: none;
+    border-radius: 999px;
+    padding: 12px 24px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 12px 28px rgba(255, 126, 179, .32);
+  }
 </style>
 </head>
 <body>
@@ -533,6 +593,15 @@
     </div>
     <footer>键盘输入 · 拼对自动朗读 + 彩蛋 🎊</footer>
   </main>
+
+  <div class="chapter-modal" id="chapterModal" role="dialog" aria-modal="true" aria-labelledby="chapterTitle">
+    <div class="chapter-dialog">
+      <div class="chapter-icon">🏆</div>
+      <h2 class="chapter-title" id="chapterTitle">恭喜你完成本章！</h2>
+      <p class="chapter-text" id="chapterText">你已经完成本章的全部单词。</p>
+      <button class="chapter-action" id="chapterClose">继续练习</button>
+    </div>
+  </div>
 
 <script>
 // 三年级下 · 课本词汇（按课本 Appendix 2 录入）
@@ -699,16 +768,21 @@ const cardEl = $("card");
 const eggLayerEl = $("eggLayer");
 const successBadgeEl = $("successBadge");
 const streakBadgeEl = $("streakBadge");
+const chapterModalEl = $("chapterModal");
+const chapterTextEl = $("chapterText");
+const chapterCloseEl = $("chapterClose");
 
 let currentUnit = 0;
 let queue = [];
 let current = null;
-let correct = 0;
-let total = 0;
 let streak = 0;
 let boxEls = [];       // box div elements (excluding spaces)
 let typed = [];        // typed letters (length === boxEls.length when full)
 let locked = false;    // lock input briefly after correct/incorrect
+const unitProgress = UNITS.map(() => ({
+  completed: new Set(),
+  notified: false,
+}));
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -728,17 +802,23 @@ function renderUnits() {
     const parts = u.name.split("·");
     const subtitle = (parts[1] || u.name).trim();
     b.innerHTML = `<span class="unit-num">${i + 1}</span><span class="unit-name">${subtitle}</span>`;
-    b.onclick = () => { currentUnit = i; startUnit(); renderUnits(); };
+    b.onclick = () => { closeChapterModal(); currentUnit = i; startUnit(); renderUnits(); };
     unitsEl.appendChild(b);
   });
 }
 
 function startUnit() {
   queue = shuffle(UNITS[currentUnit].words);
-  correct = 0;
-  total = 0;
   streak = 0;
   next();
+}
+
+function wordKey(word) {
+  return word.trim().toLowerCase();
+}
+
+function currentProgress() {
+  return unitProgress[currentUnit];
 }
 
 function buildBoxes(word) {
@@ -783,6 +863,13 @@ function renderTyped() {
 }
 
 function handleKey(e) {
+  if (chapterModalEl.classList.contains("show")) {
+    if (e.key === "Enter" || e.key === "Escape") {
+      closeChapterModal();
+      e.preventDefault();
+    }
+    return;
+  }
   if (locked || !current) return;
   // 忽略修饰键组合
   if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -810,16 +897,17 @@ function checkAll() {
   if (!current) return;
   const got = typed.join("");
   const expect = current.en.replace(/ /g, "").toLowerCase();
-  total += 1;
   if (got === expect) {
-    correct += 1;
     streak += 1;
+    const progress = currentProgress();
+    progress.completed.add(wordKey(current.en));
     boxEls.forEach(b => { b.classList.remove("bad", "filled", "cursor"); b.classList.add("good"); });
     answerEl.textContent = `太棒了！ ${current.en} — ${current.zh}`;
     answerEl.classList.remove("bad");
     speak(current.en);
     updateStats();
     celebrate(current.en, streak);
+    maybeShowChapterComplete();
     locked = true;
     setTimeout(() => { locked = false; next(); }, 1500);
   } else {
@@ -867,8 +955,27 @@ function next() {
 }
 
 function updateStats() {
-  statsEl.textContent = correct;
-  statsTotalEl.textContent = total;
+  statsEl.textContent = currentProgress().completed.size;
+  statsTotalEl.textContent = UNITS[currentUnit].words.length;
+}
+
+function maybeShowChapterComplete() {
+  const progress = currentProgress();
+  const unitTotal = UNITS[currentUnit].words.length;
+  if (progress.notified || progress.completed.size < unitTotal) return;
+
+  progress.notified = true;
+  const completedUnit = currentUnit;
+  setTimeout(() => {
+    const unitName = UNITS[completedUnit].name;
+    chapterTextEl.textContent = `你已经完成 ${unitTotal} / ${unitTotal} 个单词：${unitName}`;
+    chapterModalEl.classList.add("show");
+    spawnConfetti(260);
+  }, 650);
+}
+
+function closeChapterModal() {
+  chapterModalEl.classList.remove("show");
 }
 
 // 语音
@@ -1058,6 +1165,10 @@ skipEl.addEventListener("click", () => {
   if (!current) return;
   speak(current.en);
   setTimeout(next, 400);
+});
+chapterCloseEl.addEventListener("click", closeChapterModal);
+chapterModalEl.addEventListener("click", (e) => {
+  if (e.target === chapterModalEl) closeChapterModal();
 });
 
 renderUnits();
