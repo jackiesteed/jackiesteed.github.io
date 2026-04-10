@@ -657,6 +657,131 @@
       padding: 32px 14px;
     }
   }
+
+  /* === 听写模式 sidebar === */
+  .unit-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .unit-row .unit-btn { flex: 1; min-width: 0; }
+  .dict-btn {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--soft);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .18s, transform .18s;
+    padding: 0;
+    color: var(--accent);
+  }
+  .dict-btn:hover {
+    background: rgba(46, 114, 114, .18);
+    transform: scale(1.12);
+  }
+
+  /* === 听写 overlay === */
+  .dictation-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10002;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .22s ease;
+  }
+  .dictation-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .dict-card {
+    width: min(540px, 100%);
+    background: #fff;
+    border-radius: 36px;
+    padding: 36px 32px 30px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    text-align: center;
+  }
+  .dict-top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .dict-unit-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: .4px;
+    text-align: left;
+  }
+  .dict-counter {
+    font-size: clamp(38px, 9vw, 68px);
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .dict-counter .dict-n { color: var(--accent); }
+  .dict-counter .dict-sep {
+    font-size: .6em;
+    color: var(--muted);
+    margin: 0 8px;
+  }
+  .dict-status {
+    font-size: clamp(17px, 3.5vw, 24px);
+    font-weight: 600;
+    color: var(--muted);
+    min-height: 2.2em;
+    line-height: 1.5;
+  }
+  .dict-bar-wrap {
+    width: 100%;
+    height: 22px;
+    background: var(--soft);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .dict-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+    width: 100%;
+  }
+  .dict-seconds {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--accent-3);
+    min-height: 38px;
+    letter-spacing: 1px;
+  }
+  .dict-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  @media (max-width: 640px) {
+    .dict-card {
+      border-radius: 24px;
+      padding: 28px 18px 22px;
+      gap: 16px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -714,6 +839,30 @@
     />
     <footer>键盘输入 · 拼对自动朗读 + 彩蛋 🎊</footer>
   </main>
+
+  <div class="dictation-overlay" id="dictationOverlay">
+    <div class="dict-card">
+      <div class="dict-top">
+        <span class="dict-unit-label" id="dictUnitLabel"></span>
+        <button class="ghost" id="dictExitBtn">✕ 结束</button>
+      </div>
+      <div class="dict-counter">
+        第 <span class="dict-n" id="dictIdx">1</span> 个
+        <span class="dict-sep">/</span>
+        共 <span class="dict-n" id="dictTotal">0</span> 个
+      </div>
+      <div class="dict-status" id="dictStatus">准备中...</div>
+      <div class="dict-bar-wrap">
+        <div class="dict-bar" id="dictBar"></div>
+      </div>
+      <div class="dict-seconds" id="dictSeconds"></div>
+      <div class="dict-controls">
+        <button class="ghost" id="dictPauseBtn">⏸ 暂停</button>
+        <button class="ghost" id="dictRepeatBtn">🔁 重听</button>
+        <button class="ghost" id="dictNextBtn">⏭ 下一个</button>
+      </div>
+    </div>
+  </div>
 
   <div class="chapter-modal" id="chapterModal" role="dialog" aria-modal="true" aria-labelledby="chapterTitle">
     <div class="chapter-dialog">
@@ -922,6 +1071,9 @@ function shuffle(arr) {
 function renderUnits() {
   unitsEl.innerHTML = "";
   UNITS.forEach((u, i) => {
+    const row = document.createElement("div");
+    row.className = "unit-row";
+
     const b = document.createElement("button");
     b.className = "unit-btn" + (i === currentUnit ? " active" : "");
     // 提取标题部分（"Unit X · Name" → "Name"）
@@ -936,7 +1088,20 @@ function renderUnits() {
       renderUnits();
       focusTypingInput();
     };
-    unitsEl.appendChild(b);
+
+    const d = document.createElement("button");
+    d.className = "dict-btn";
+    d.title = "听写模式";
+    d.textContent = "🎧";
+    d.onclick = (e) => {
+      e.stopPropagation();
+      closeMenu();
+      startDictation(i);
+    };
+
+    row.appendChild(b);
+    row.appendChild(d);
+    unitsEl.appendChild(row);
   });
 }
 
@@ -1380,6 +1545,215 @@ function celebrate(word, streakCount) {
   successBadgeEl.textContent = SUCCESS_EMOJIS[Math.floor(Math.random() * SUCCESS_EMOJIS.length)];
   restartAnimation(successBadgeEl, "show");
 }
+
+// ===== 听写模式 =====
+let dictActive = false;
+let dictGen = 0; // 每次取消/重启时递增，用于使旧的 async 流程失效
+let dictWordList = [];
+let dictWordIndex = 0;
+let dictPaused = false;
+let dictPhase = 'idle';
+let dictRAF = null;
+let dictCdRemaining = 0;
+let dictCdTotal = 0;
+
+const dictOverlayEl   = $('dictationOverlay');
+const dictUnitLabelEl = $('dictUnitLabel');
+const dictIdxEl       = $('dictIdx');
+const dictTotalEl     = $('dictTotal');
+const dictStatusEl    = $('dictStatus');
+const dictBarEl       = $('dictBar');
+const dictSecondsEl   = $('dictSeconds');
+const dictPauseBtnEl  = $('dictPauseBtn');
+const dictRepeatBtnEl = $('dictRepeatBtn');
+const dictNextBtnEl   = $('dictNextBtn');
+const dictExitBtnEl   = $('dictExitBtn');
+
+// 异步朗读：en-US 或 zh-CN，结束后 resolve
+function dictSpeakAsync(text, lang, gen) {
+  return new Promise(resolve => {
+    if (typeof speechSynthesis === 'undefined' || dictGen !== gen) { resolve(); return; }
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang  = lang;
+    u.rate  = 0.82;
+    if (lang === 'en-US' && voice) u.voice = voice;
+    let done = false;
+    const finish = () => { if (!done) { done = true; resolve(); } };
+    u.onend  = finish;
+    u.onerror = finish;
+    // 浏览器 onend 不可靠，加超时兜底
+    const ms = lang === 'zh-CN'
+      ? Math.max(1800, text.length * 350 + 500)
+      : Math.max(1400, text.length * 130 + 600);
+    setTimeout(finish, ms);
+    speechSynthesis.speak(u);
+  });
+}
+
+// 简单延迟（不受 gen 控制，但调用方会 check gen）
+function dictDelay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// 倒计时（RAF 驱动，支持暂停，受 gen 控制）
+function dictCountdownAsync(durationMs, gen) {
+  return new Promise(resolve => {
+    if (dictGen !== gen) { resolve(); return; }
+    dictCdTotal     = durationMs;
+    dictCdRemaining = durationMs;
+    let lastTime = null;
+
+    function tick(now) {
+      if (!dictActive || dictGen !== gen) { resolve(); return; }
+      if (lastTime !== null && !dictPaused) {
+        dictCdRemaining = Math.max(0, dictCdRemaining - (now - lastTime));
+      }
+      lastTime = now;
+
+      const ratio = dictCdTotal > 0 ? dictCdRemaining / dictCdTotal : 0;
+      dictBarEl.style.width = `${ratio * 100}%`;
+      dictSecondsEl.textContent = dictCdRemaining > 0
+        ? Math.ceil(dictCdRemaining / 1000) + ' 秒' : '';
+
+      if (dictCdRemaining <= 0) { resolve(); return; }
+      dictRAF = requestAnimationFrame(tick);
+    }
+    dictRAF = requestAnimationFrame(tick);
+  });
+}
+
+function dictCancelCurrent() {
+  dictGen++;
+  if (dictRAF) { cancelAnimationFrame(dictRAF); dictRAF = null; }
+  if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
+}
+
+async function startDictation(unitIdx) {
+  dictCancelCurrent();
+  dictActive     = true;
+  dictWordList   = UNITS[unitIdx].words.slice();
+  dictWordIndex  = 0;
+  dictPaused     = false;
+  dictPhase      = 'idle';
+
+  dictUnitLabelEl.textContent  = UNITS[unitIdx].name + ' · 听写';
+  dictTotalEl.textContent      = dictWordList.length;
+  dictIdxEl.textContent        = 1;
+  dictStatusEl.textContent     = '准备中...';
+  dictBarEl.style.width        = '100%';
+  dictSecondsEl.textContent    = '';
+  dictPauseBtnEl.textContent   = '⏸ 暂停';
+
+  dictOverlayEl.classList.add('show');
+
+  const gen = dictGen;
+  await dictDelay(700);
+  if (dictGen !== gen || !dictActive) return;
+  await dictRunWord(gen);
+}
+
+async function dictRunWord(gen) {
+  while (dictActive && dictGen === gen) {
+    if (dictWordIndex >= dictWordList.length) {
+      dictFinish(); return;
+    }
+
+    const word = dictWordList[dictWordIndex];
+    dictIdxEl.textContent     = dictWordIndex + 1;
+    dictSecondsEl.textContent = '';
+    dictBarEl.style.width     = '100%';
+
+    // ① 朗读英文
+    dictPhase = 'speak_en';
+    dictStatusEl.textContent = '🔊 请听单词...';
+    await dictSpeakAsync(word.say || word.en, 'en-US', gen);
+    if (dictGen !== gen || !dictActive) return;
+    await dictDelay(550);
+    if (dictGen !== gen || !dictActive) return;
+
+    // ② 朗读中文
+    dictPhase = 'speak_zh';
+    dictStatusEl.textContent = '🇨🇳 ' + word.zh;
+    await dictSpeakAsync(word.zh, 'zh-CN', gen);
+    if (dictGen !== gen || !dictActive) return;
+    await dictDelay(350);
+    if (dictGen !== gen || !dictActive) return;
+
+    // ③ 倒计时（孩子书写）
+    dictPhase = 'countdown';
+    dictStatusEl.textContent = '✏️ 请写下这个单词';
+    const letters  = word.en.replace(/ /g, '').length;
+    const duration = letters * 1500;
+    await dictCountdownAsync(duration, gen);
+    if (dictGen !== gen || !dictActive) return;
+
+    // ④ 再读一遍英文
+    dictPhase = 'speak_en2';
+    dictSecondsEl.textContent = '';
+    dictBarEl.style.width     = '0%';
+    dictStatusEl.textContent  = '🔊 再听一遍...';
+    await dictSpeakAsync(word.say || word.en, 'en-US', gen);
+    if (dictGen !== gen || !dictActive) return;
+    await dictDelay(800);
+    if (dictGen !== gen || !dictActive) return;
+
+    dictWordIndex++;
+  }
+}
+
+function dictFinish() {
+  dictPhase = 'done';
+  dictStatusEl.textContent  = '🎉 全部听写完成！';
+  dictBarEl.style.width     = '0%';
+  dictSecondsEl.textContent = '';
+  dictIdxEl.textContent     = dictWordList.length;
+}
+
+function dictExit() {
+  dictCancelCurrent();
+  dictActive = false;
+  dictOverlayEl.classList.remove('show');
+  focusTypingInput();
+}
+
+function dictTogglePause() {
+  if (!dictActive) return;
+  dictPaused = !dictPaused;
+  dictPauseBtnEl.textContent = dictPaused ? '▶ 继续' : '⏸ 暂停';
+  if (dictPaused) {
+    dictStatusEl.textContent = '⏸ 已暂停';
+  } else {
+    if (dictPhase === 'countdown') dictStatusEl.textContent = '✏️ 请写下这个单词';
+    else dictStatusEl.textContent = '🔊 请听单词...';
+  }
+}
+
+function dictRepeat() {
+  if (!dictActive) return;
+  dictCancelCurrent();
+  dictActive = true;
+  dictPaused = false;
+  dictPauseBtnEl.textContent = '⏸ 暂停';
+  const gen = dictGen;
+  setTimeout(() => { if (dictGen === gen && dictActive) dictRunWord(gen); }, 300);
+}
+
+function dictSkip() {
+  if (!dictActive) return;
+  dictCancelCurrent();
+  dictActive = true;
+  dictPaused = false;
+  dictPauseBtnEl.textContent = '⏸ 暂停';
+  dictWordIndex++;
+  const gen = dictGen;
+  setTimeout(() => { if (dictGen === gen && dictActive) dictRunWord(gen); }, 300);
+}
+
+dictPauseBtnEl.addEventListener('click',  dictTogglePause);
+dictRepeatBtnEl.addEventListener('click', dictRepeat);
+dictNextBtnEl.addEventListener('click',   dictSkip);
+dictExitBtnEl.addEventListener('click',   dictExit);
 
 document.addEventListener("keydown", handleKey);
 typingInputEl.addEventListener("input", handleTextInput);
