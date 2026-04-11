@@ -1026,6 +1026,96 @@ const CURRICULUM = [
           },
         ],
       },
+      {
+        name: "下",
+        units: [
+          {
+            name: "Unit 1 · Activities",
+            words: [
+              { en: "play football",     zh: "踢足球",     emoji: "⚽" },
+              { en: "fly a kite",        zh: "放风筝",     emoji: "🪁" },
+              { en: "ride a bike",       zh: "骑自行车",   emoji: "🚴" },
+              { en: "make a model plane", zh: "做飞机模型", emoji: "✈️" },
+              { en: "swim",              zh: "游泳",       emoji: "🏊" },
+              { en: "make a snowman",    zh: "堆雪人",     emoji: "⛄" },
+              { en: "can't",             zh: "不能；不会", emoji: "🚫" },
+            ],
+          },
+          {
+            name: "Unit 2 · Weather",
+            words: [
+              { en: "rainy",    zh: "下雨的",   emoji: "🌧️" },
+              { en: "cloudy",   zh: "多云的",   emoji: "☁️" },
+              { en: "snowy",    zh: "下雪的",   emoji: "❄️" },
+              { en: "windy",    zh: "刮风的",   emoji: "💨" },
+              { en: "sunny",    zh: "晴朗的",   emoji: "☀️" },
+              { en: "umbrella", zh: "雨伞",     emoji: "☂️" },
+              { en: "weather",  zh: "天气",     emoji: "🌤️" },
+              { en: "wow",      zh: "哇",       emoji: "😲" },
+              { en: "let's",    zh: "让我们……", emoji: "🙌" },
+            ],
+          },
+          {
+            name: "Unit 3 · Seasons",
+            words: [
+              { en: "spring",    zh: "春天",     emoji: "🌷" },
+              { en: "summer",    zh: "夏天",     emoji: "🏖️" },
+              { en: "autumn",    zh: "秋天",     emoji: "🍂" },
+              { en: "winter",    zh: "冬天",     emoji: "⛄" },
+              { en: "hot",       zh: "炎热的",   emoji: "🥵" },
+              { en: "warm",      zh: "温暖的",   emoji: "☀️" },
+              { en: "cool",      zh: "凉爽的",   emoji: "😎" },
+              { en: "cold",      zh: "寒冷的",   emoji: "🥶" },
+              { en: "favourite", zh: "最喜欢的", emoji: "❤️" },
+              { en: "season",    zh: "季节",     emoji: "🍁" },
+            ],
+          },
+          {
+            name: "Unit 4 · Numbers",
+            words: [
+              { en: "eleven",   zh: "十一",               emoji: "1️⃣1️⃣" },
+              { en: "twelve",   zh: "十二",               emoji: "1️⃣2️⃣" },
+              { en: "twenty",   zh: "二十",               emoji: "2️⃣0️⃣" },
+              { en: "thirty",   zh: "三十",               emoji: "3️⃣0️⃣" },
+              { en: "forty",    zh: "四十",               emoji: "4️⃣0️⃣" },
+              { en: "fifty",    zh: "五十",               emoji: "5️⃣0️⃣" },
+              { en: "thirteen", zh: "十三",               emoji: "1️⃣3️⃣" },
+              { en: "fourteen", zh: "十四",               emoji: "1️⃣4️⃣" },
+              { en: "fifteen",  zh: "十五",               emoji: "1️⃣5️⃣" },
+              { en: "time",     zh: "时间",               emoji: "⏰" },
+              { en: "playtime", zh: "游戏时间；课间休息", emoji: "🛝" },
+            ],
+          },
+          {
+            name: "Unit 5 · My day",
+            words: [
+              { en: "get up",        zh: "起床",         emoji: "🛏️" },
+              { en: "eat breakfast", zh: "吃早饭",       emoji: "🍳" },
+              { en: "go to school",  zh: "上学",         emoji: "🏫" },
+              { en: "eat lunch",     zh: "吃午饭",       emoji: "🍱" },
+              { en: "go home",       zh: "回家",         emoji: "🏠" },
+              { en: "eat dinner",    zh: "吃晚饭",       emoji: "🍽️" },
+              { en: "go to bed",     zh: "上床；睡觉",   emoji: "😴" },
+              { en: "when",          zh: "什么时候；何时", emoji: "⏳" },
+              { en: "every day",     zh: "每天",         emoji: "📅" },
+              { en: "at",            zh: "在……点钟",     emoji: "🕐" },
+            ],
+          },
+          {
+            name: "Unit 6 · Days of the week",
+            words: [
+              { en: "Sunday",    zh: "星期日", emoji: "7️⃣" },
+              { en: "Monday",    zh: "星期一", emoji: "1️⃣" },
+              { en: "Tuesday",   zh: "星期二", emoji: "2️⃣" },
+              { en: "Wednesday", zh: "星期三", emoji: "3️⃣" },
+              { en: "Thursday",  zh: "星期四", emoji: "4️⃣" },
+              { en: "Friday",    zh: "星期五", emoji: "5️⃣" },
+              { en: "Saturday",  zh: "星期六", emoji: "6️⃣" },
+              { en: "today",     zh: "今天",   emoji: "📆" },
+            ],
+          },
+        ],
+      },
     ],
   },
   {
@@ -1518,10 +1608,10 @@ function buildBoxes(word) {
   boxEls = [];
   typed = [];
   word.split("").forEach((ch) => {
-    if (ch === " " || ch === "-") {
+    if (ch === " " || ch === "-" || ch === "'") {
       const sp = document.createElement("div");
       sp.className = "box space";
-      if (ch === "-") sp.textContent = "-";
+      if (ch !== " ") sp.textContent = ch;
       boxesEl.appendChild(sp);
       return;
     }
@@ -1615,7 +1705,7 @@ function handleTextInput(e) {
 function checkAll() {
   if (!current) return;
   const got = typed.join("");
-  const expect = current.en.replace(/[ -]/g, "").toLowerCase();
+  const expect = current.en.replace(/[ \-']/g, "").toLowerCase();
   if (got === expect) {
     streak += 1;
     const progress = currentProgress();
@@ -1899,7 +1989,7 @@ function createEggPop(text, index, totalItems, className = "") {
 }
 
 function burstWord(word) {
-  const letters = word.replace(/[ -]/g, "").split("").slice(0, 10);
+  const letters = word.replace(/[ \-']/g, "").split("").slice(0, 10);
   letters.forEach((letter, index) => createEggPop(letter, index, letters.length));
 
   const sparkleCount = Math.min(6, Math.max(3, letters.length));
@@ -2069,7 +2159,7 @@ async function dictRunWord(gen) {
     // ③ 倒计时（孩子书写）
     dictPhase = 'countdown';
     dictStatusEl.textContent = '✏️ 请写下这个单词';
-    const letters  = word.en.replace(/[ -]/g, '').length;
+    const letters  = word.en.replace(/[ \-']/g, '').length;
     const duration = letters * 2000;
     await dictCountdownAsync(duration, gen);
     if (dictGen !== gen || !dictActive) return;
