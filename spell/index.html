@@ -1672,10 +1672,14 @@ async function dictRunWord(gen) {
     await dictDelay(550);
     if (dictGen !== gen || !dictActive) return;
 
-    // ② 朗读中文
+    // ② 朗读中文 + 英文
     dictPhase = 'speak_zh';
     dictStatusEl.textContent = '🇨🇳 ' + word.zh;
     await dictSpeakAsync(word.zh, 'zh-CN', gen);
+    if (dictGen !== gen || !dictActive) return;
+    await dictDelay(300);
+    if (dictGen !== gen || !dictActive) return;
+    await dictSpeakAsync(word.say || word.en, 'en-US', gen);
     if (dictGen !== gen || !dictActive) return;
     await dictDelay(350);
     if (dictGen !== gen || !dictActive) return;
@@ -1684,7 +1688,7 @@ async function dictRunWord(gen) {
     dictPhase = 'countdown';
     dictStatusEl.textContent = '✏️ 请写下这个单词';
     const letters  = word.en.replace(/ /g, '').length;
-    const duration = letters * 1500;
+    const duration = letters * 2000;
     await dictCountdownAsync(duration, gen);
     if (dictGen !== gen || !dictActive) return;
 
