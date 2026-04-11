@@ -1573,21 +1573,25 @@ const dictExitBtnEl   = $('dictExitBtn');
 function dictSpeakAsync(text, lang, gen) {
   return new Promise(resolve => {
     if (typeof speechSynthesis === 'undefined' || dictGen !== gen) { resolve(); return; }
+    // Chrome 有 bug：cancel() 紧接 speak() 偶尔会重放上一句，加一小段延时规避
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang  = lang;
-    u.rate  = 0.82;
-    if (lang === 'en-US' && voice) u.voice = voice;
-    let done = false;
-    const finish = () => { if (!done) { done = true; resolve(); } };
-    u.onend  = finish;
-    u.onerror = finish;
-    // 浏览器 onend 不可靠，加超时兜底
-    const ms = lang === 'zh-CN'
-      ? Math.max(1800, text.length * 350 + 500)
-      : Math.max(1400, text.length * 130 + 600);
-    setTimeout(finish, ms);
-    speechSynthesis.speak(u);
+    setTimeout(() => {
+      if (dictGen !== gen || !dictActive) { resolve(); return; }
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang  = lang;
+      u.rate  = 0.82;
+      if (lang === 'en-US' && voice) u.voice = voice;
+      let done = false;
+      const finish = () => { if (!done) { done = true; resolve(); } };
+      u.onend  = finish;
+      u.onerror = finish;
+      // 浏览器 onend 不可靠，加超时兜底
+      const ms = lang === 'zh-CN'
+        ? Math.max(1800, text.length * 350 + 500)
+        : Math.max(1400, text.length * 130 + 600);
+      setTimeout(finish, ms);
+      speechSynthesis.speak(u);
+    }, 120);
   });
 }
 
@@ -1669,19 +1673,15 @@ async function dictRunWord(gen) {
     dictStatusEl.textContent = '🔊 请听单词...';
     await dictSpeakAsync(word.say || word.en, 'en-US', gen);
     if (dictGen !== gen || !dictActive) return;
-    await dictDelay(550);
+    await dictDelay(400);
     if (dictGen !== gen || !dictActive) return;
 
-    // ② 朗读中文 + 英文
+    // ② 朗读中文
     dictPhase = 'speak_zh';
     dictStatusEl.textContent = '🇨🇳 ' + word.zh;
     await dictSpeakAsync(word.zh, 'zh-CN', gen);
     if (dictGen !== gen || !dictActive) return;
-    await dictDelay(300);
-    if (dictGen !== gen || !dictActive) return;
-    await dictSpeakAsync(word.say || word.en, 'en-US', gen);
-    if (dictGen !== gen || !dictActive) return;
-    await dictDelay(350);
+    await dictDelay(400);
     if (dictGen !== gen || !dictActive) return;
 
     // ③ 倒计时（孩子书写）
@@ -1690,16 +1690,6 @@ async function dictRunWord(gen) {
     const letters  = word.en.replace(/ /g, '').length;
     const duration = letters * 2000;
     await dictCountdownAsync(duration, gen);
-    if (dictGen !== gen || !dictActive) return;
-
-    // ④ 再读一遍英文
-    dictPhase = 'speak_en2';
-    dictSecondsEl.textContent = '';
-    dictBarEl.style.width     = '0%';
-    dictStatusEl.textContent  = '🔊 再听一遍...';
-    await dictSpeakAsync(word.say || word.en, 'en-US', gen);
-    if (dictGen !== gen || !dictActive) return;
-    await dictDelay(800);
     if (dictGen !== gen || !dictActive) return;
 
     dictWordIndex++;
