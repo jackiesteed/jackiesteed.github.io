@@ -116,6 +116,62 @@
     text-transform: uppercase;
     font-weight: 700;
   }
+  .grade-tabs {
+    display: flex;
+    gap: 6px;
+    margin: 0 4px 10px;
+  }
+  .grade-tab {
+    flex: 1;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 12px;
+    padding: 9px 6px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .18s;
+  }
+  .grade-tab:hover { background: var(--soft); }
+  .grade-tab.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 6px 14px rgba(46, 114, 114, .2);
+  }
+  .semester-tabs {
+    display: flex;
+    gap: 4px;
+    margin: 0 4px 14px;
+    padding: 3px;
+    background: var(--soft);
+    border-radius: 12px;
+  }
+  .semester-tab {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    border-radius: 9px;
+    padding: 7px 4px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .18s;
+  }
+  .semester-tab.active {
+    background: #fff;
+    color: var(--accent);
+    box-shadow: 0 2px 6px rgba(46, 114, 114, .15);
+  }
+  .semester-tab.disabled {
+    color: var(--muted);
+    cursor: not-allowed;
+    opacity: .4;
+  }
   .units {
     display: flex;
     flex-direction: column;
@@ -794,9 +850,11 @@
       <div class="brand-logo">📚</div>
       <div>
         <div class="brand-title">学单词</div>
-        <div class="brand-sub">SPELL · 三年级下</div>
+        <div class="brand-sub" id="brandSub">SPELL</div>
       </div>
     </div>
+    <div class="grade-tabs" id="gradeTabs"></div>
+    <div class="semester-tabs" id="semesterTabs"></div>
     <h2>单元 Units</h2>
     <div class="units" id="units"></div>
   </aside>
@@ -874,8 +932,108 @@
   </div>
 
 <script>
-// 三年级下 · 课本词汇（按课本 Appendix 2 录入）
-const UNITS = [
+// 课本词汇（按课本 Appendix 2 录入）
+const CURRICULUM = [
+  {
+    grade: "二年级",
+    semesters: [
+      {
+        name: "上",
+        units: [
+          {
+            name: "Unit 1 · Family",
+            words: [
+              { en: "father",      zh: "父亲；爸爸",           emoji: "👨" },
+              { en: "mother",      zh: "母亲；妈妈",           emoji: "👩" },
+              { en: "brother",     zh: "兄；弟",               emoji: "👦" },
+              { en: "sister",      zh: "姐；妹",               emoji: "👧" },
+              { en: "grandmother", zh: "(外)祖母",             emoji: "👵" },
+              { en: "grandfather", zh: "(外)祖父",             emoji: "👴" },
+              { en: "who",         zh: "谁",                   emoji: "❓" },
+              { en: "he",          zh: "他",                   emoji: "🙋‍♂️" },
+              { en: "she",         zh: "她",                   emoji: "🙋‍♀️" },
+            ],
+          },
+          {
+            name: "Unit 2 · Classmates",
+            words: [
+              { en: "classmate", zh: "同班同学", emoji: "👫" },
+              { en: "friend",    zh: "朋友",     emoji: "🤝" },
+              { en: "woman",     zh: "女人",     emoji: "👩" },
+              { en: "girl",      zh: "女孩",     emoji: "👧" },
+              { en: "man",       zh: "男人",     emoji: "👨" },
+              { en: "boy",       zh: "男孩",     emoji: "👦" },
+              { en: "look",      zh: "看；瞧",   emoji: "👀" },
+              { en: "his",       zh: "他的",     emoji: "👆" },
+              { en: "name",      zh: "名字",     emoji: "🏷️" },
+              { en: "her",       zh: "她的",     emoji: "💁‍♀️" },
+              { en: "or",        zh: "还是",     emoji: "🔀" },
+            ],
+          },
+          {
+            name: "Unit 3 · Looks",
+            words: [
+              { en: "big",      zh: "大的",             emoji: "🐘" },
+              { en: "tall",     zh: "高的",             emoji: "🦒" },
+              { en: "pretty",   zh: "漂亮的；可爱的",   emoji: "🌸" },
+              { en: "thin",     zh: "瘦的",             emoji: "🦴" },
+              { en: "short",    zh: "矮的",             emoji: "📏" },
+              { en: "handsome", zh: "漂亮的；英俊的",   emoji: "🤵" },
+              { en: "new",      zh: "新的",             emoji: "✨" },
+              { en: "does",     zh: "(助动词)",         emoji: "❔" },
+            ],
+          },
+          {
+            name: "Unit 4 · In town",
+            words: [
+              { en: "bookshop",    zh: "书店",   emoji: "📚" },
+              { en: "zoo",         zh: "动物园", emoji: "🦁" },
+              { en: "school",      zh: "学校",   emoji: "🏫" },
+              { en: "supermarket", zh: "超市",   emoji: "🛒" },
+              { en: "park",        zh: "公园",   emoji: "🌳" },
+              { en: "hospital",    zh: "医院",   emoji: "🏥" },
+              { en: "go",          zh: "去",     emoji: "🚶" },
+              { en: "to",          zh: "向；到", emoji: "➡️" },
+            ],
+          },
+          {
+            name: "Unit 5 · Nature",
+            words: [
+              { en: "grass",  zh: "草",         emoji: "🌱" },
+              { en: "tree",   zh: "树",         emoji: "🌳" },
+              { en: "flower", zh: "花；花朵",   emoji: "🌸" },
+              { en: "boat",   zh: "小船",       emoji: "⛵" },
+              { en: "lake",   zh: "湖",         emoji: "🏞️" },
+              { en: "hill",   zh: "小山",       emoji: "⛰️" },
+            ],
+          },
+          {
+            name: "Unit 6 · Christmas",
+            words: [
+              { en: "Christmas",        zh: "圣诞节",             emoji: "🎄" },
+              { en: "Father Christmas", zh: "圣诞老人",           emoji: "🎅" },
+              { en: "Christmas tree",   zh: "圣诞树",             emoji: "🎄" },
+              { en: "card",             zh: "贺卡；明信片",       emoji: "💌" },
+              { en: "present",          zh: "礼物",               emoji: "🎁" },
+              { en: "New Year",         zh: "新年",               emoji: "🎊" },
+              { en: "merry",            zh: "愉快的；高兴的",     emoji: "😊" },
+              { en: "too",              zh: "也；又",             emoji: "➕" },
+              { en: "here",             zh: "这儿",               emoji: "📍" },
+              { en: "for",              zh: "(表示接受某事物)",   emoji: "🎯" },
+              { en: "thank",            zh: "谢谢",               emoji: "🙏" },
+              { en: "happy",            zh: "快乐的；幸福的",     emoji: "😄" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    grade: "三年级",
+    semesters: [
+      {
+        name: "下",
+        units: [
   {
     name: "Unit 1 · Where are you from",
     words: [
@@ -1021,7 +1179,30 @@ const UNITS = [
       { en: "back",       zh: "回到原处",   emoji: "↩️" },
     ],
   },
+        ],
+      },
+    ],
+  },
 ];
+
+// 当前课本指针与扁平 UNITS 引用（保持下游代码最小改动）
+let currentGradeIdx = 1;     // 默认三年级
+let currentSemesterIdx = 0;  // 默认该年级第一个学期 (下)
+let UNITS = CURRICULUM[currentGradeIdx].semesters[currentSemesterIdx].units;
+
+// 每个 grade.semester 的进度单独保存
+const progressStore = {};
+function progressKey(gi, si) { return `${gi}.${si}`; }
+function ensureProgressFor(gi, si) {
+  const key = progressKey(gi, si);
+  if (!progressStore[key]) {
+    progressStore[key] = CURRICULUM[gi].semesters[si].units.map(() => ({
+      completed: new Set(),
+      notified: false,
+    }));
+  }
+  return progressStore[key];
+}
 
 const $ = (id) => document.getElementById(id);
 const unitsEl = $("units");
@@ -1054,10 +1235,7 @@ let streak = 0;
 let boxEls = [];       // box div elements (excluding spaces)
 let typed = [];        // typed letters (length === boxEls.length when full)
 let locked = false;    // lock input briefly after correct/incorrect
-const unitProgress = UNITS.map(() => ({
-  completed: new Set(),
-  notified: false,
-}));
+let unitProgress = ensureProgressFor(currentGradeIdx, currentSemesterIdx);
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -1066,6 +1244,73 @@ function shuffle(arr) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+const gradeTabsEl = $("gradeTabs");
+const semesterTabsEl = $("semesterTabs");
+const brandSubEl = $("brandSub");
+
+function updateBrandSub() {
+  const g = CURRICULUM[currentGradeIdx].grade;
+  const s = CURRICULUM[currentGradeIdx].semesters[currentSemesterIdx].name;
+  brandSubEl.textContent = `SPELL · ${g}${s}`;
+}
+
+function renderGradeTabs() {
+  gradeTabsEl.innerHTML = "";
+  CURRICULUM.forEach((g, gi) => {
+    const b = document.createElement("button");
+    b.className = "grade-tab" + (gi === currentGradeIdx ? " active" : "");
+    b.textContent = g.grade;
+    b.onclick = () => selectGrade(gi);
+    gradeTabsEl.appendChild(b);
+  });
+}
+
+function renderSemesterTabs() {
+  semesterTabsEl.innerHTML = "";
+  const grade = CURRICULUM[currentGradeIdx];
+  // 固定显示 上/下；如果当前年级没有对应学期则禁用
+  ["上", "下"].forEach((label) => {
+    const b = document.createElement("button");
+    const sIdx = grade.semesters.findIndex(s => s.name === label);
+    const available = sIdx >= 0;
+    const isActive = available && sIdx === currentSemesterIdx;
+    b.className = "semester-tab" + (isActive ? " active" : "") + (!available ? " disabled" : "");
+    b.textContent = label;
+    if (available) {
+      b.onclick = () => selectSemester(sIdx);
+    } else {
+      b.disabled = true;
+    }
+    semesterTabsEl.appendChild(b);
+  });
+}
+
+function selectGrade(gi) {
+  if (gi === currentGradeIdx) return;
+  currentGradeIdx = gi;
+  // 切到该年级的第一个可用学期
+  currentSemesterIdx = 0;
+  onCurriculumChanged();
+}
+
+function selectSemester(si) {
+  if (si === currentSemesterIdx) return;
+  currentSemesterIdx = si;
+  onCurriculumChanged();
+}
+
+function onCurriculumChanged() {
+  UNITS = CURRICULUM[currentGradeIdx].semesters[currentSemesterIdx].units;
+  unitProgress = ensureProgressFor(currentGradeIdx, currentSemesterIdx);
+  currentUnit = 0;
+  updateBrandSub();
+  renderGradeTabs();
+  renderSemesterTabs();
+  renderUnits();
+  startUnit();
+  focusTypingInput();
 }
 
 function renderUnits() {
@@ -1767,6 +2012,9 @@ chapterModalEl.addEventListener("click", (e) => {
   if (e.target === chapterModalEl) closeChapterModal();
 });
 
+updateBrandSub();
+renderGradeTabs();
+renderSemesterTabs();
 renderUnits();
 startUnit();
 </script>
