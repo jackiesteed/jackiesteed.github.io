@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>King 词语近似性网络</title>
+<style>
+  :root {
+    --bg: #f4f0e8;
+    --ink: #17212a;
+    --muted: #66717b;
+    --paper: #fffaf0;
+    --line: rgba(23, 33, 42, .14);
+    --gold: #c7932f;
+    --red: #9e3f3f;
+    --blue: #2d647f;
+    --green: #48715d;
+    --violet: #6a5a8d;
+    --shadow: 0 26px 70px rgba(37, 31, 22, .18);
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { min-height: 100%; }
+
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at 12% 8%, rgba(199, 147, 47, .22), transparent 25rem),
+      radial-gradient(circle at 88% 20%, rgba(45, 100, 127, .18), transparent 24rem),
+      linear-gradient(135deg, #f8f2e6 0%, #e9eee9 54%, #efe6dc 100%);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgba(23, 33, 42, .035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(23, 33, 42, .035) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.72), transparent 92%);
+  }
+
+  a { color: inherit; }
+
+  .app {
+    width: min(1440px, 100%);
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 28px;
+    display: block;
+  }
+
+  .stage {
+    position: relative;
+    min-height: calc(100vh - 56px);
+    border: 1px solid rgba(255, 255, 255, .64);
+    border-radius: var(--radius);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,.12)),
+      rgba(255, 250, 240, .42);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .topbar {
+    position: absolute;
+    inset: 0 0 auto 0;
+    z-index: 10;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 24px;
+    pointer-events: none;
+  }
+
+  .title-block { max-width: 620px; }
+
+  .eyebrow {
+    margin: 0 0 10px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(34px, 5vw, 76px);
+    line-height: .92;
+    letter-spacing: 0;
+  }
+
+  .subtitle {
+    width: min(640px, 100%);
+    margin: 14px 0 0;
+    color: #46515b;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .home {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(23, 33, 42, .14);
+    border-radius: 999px;
+    background: rgba(255, 250, 240, .78);
+    color: var(--ink);
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(37, 31, 22, .1);
+  }
+
+  .network-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: grid;
+    align-items: start;
+    justify-items: center;
+    padding-top: 184px;
+  }
+
+#network {
+    width: min(100%, 1380px);
+    height: min(80vh, 840px);
+    min-height: 560px;
+    overflow: visible;
+  }
+
+  .axis {
+    stroke: rgba(23, 33, 42, .13);
+    stroke-width: 1;
+    stroke-dasharray: 5 8;
+  }
+
+  .axis-label {
+    fill: rgba(23, 33, 42, .48);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .edge {
+    stroke-linecap: round;
+    transition: opacity .2s ease, stroke-width .2s ease;
+  }
+
+  .node {
+    cursor: pointer;
+    transition: opacity .2s ease, transform .2s ease;
+  }
+
+  .node circle {
+    stroke: rgba(255, 255, 255, .92);
+    stroke-width: 2.2;
+    filter: drop-shadow(0 8px 12px rgba(23, 33, 42, .18));
+  }
+
+  .node-label {
+    paint-order: stroke;
+    stroke: transparent;
+    stroke-width: 0;
+    stroke-linejoin: round;
+    fill: #fffaf0;
+    font-size: 11px;
+    font-weight: 800;
+    pointer-events: none;
+  }
+
+  .node-label .meaning {
+    fill: rgba(255, 250, 240, .9);
+    font-size: 9px;
+    font-weight: 700;
+  }
+
+  .node-label.center { font-size: 17px; }
+  .node-label.center .meaning { font-size: 11px; }
+  .node.center circle { stroke-width: 3px; }
+
+  .node.dimmed, .node-label.dimmed, .edge.dimmed { opacity: .15; }
+  .node.active circle { stroke: #ffffff; stroke-width: 4px; }
+
+  .tooltip {
+    position: absolute;
+    left: 24px;
+    bottom: 24px;
+    width: min(420px, calc(100% - 48px));
+    padding: 16px;
+    border: 1px solid rgba(23, 33, 42, .12);
+    border-radius: var(--radius);
+    background: rgba(255, 250, 240, .9);
+    box-shadow: 0 16px 42px rgba(37, 31, 22, .14);
+    backdrop-filter: blur(18px);
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+
+  .tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .tooltip-title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .tooltip h2 {
+    margin: 0;
+    font-size: 21px;
+    line-height: 1.1;
+  }
+
+  .score {
+    color: var(--blue);
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .tooltip p {
+    margin: 0;
+    color: #4f5a64;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 1080px) {
+    .app {
+      padding: 16px;
+    }
+
+    .stage { min-height: 780px; }
+  }
+
+  @media (max-width: 680px) {
+    .app { padding: 0; }
+    .stage {
+      min-height: 720px;
+      border-radius: 0;
+      border-left: 0;
+      border-right: 0;
+    }
+    .topbar {
+      padding: 18px;
+      gap: 12px;
+    }
+    .subtitle { font-size: 13px; }
+    .network-wrap { padding-top: 170px; }
+    #network {
+      width: 1060px;
+      min-height: 520px;
+      transform: scale(.62);
+    }
+    .tooltip {
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      width: auto;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="app">
+    <section class="stage" aria-label="King word similarity network">
+      <div class="topbar">
+        <div class="title-block">
+          <p class="eyebrow">Vector Similarity Atlas</p>
+          <h1>king 近似性网络</h1>
+          <p class="subtitle">每个词被放在一个小型语义空间里：横轴偏“王权/国家”，纵轴偏“人名/日常”。节点写有英文和中文含义，离 king 越近、连线越强，表示近似度越高。</p>
+        </div>
+        <a class="home" href="../" aria-label="Back to home">
+          <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 11.5 12 4l9 7.5v8a1 1 0 0 1-1 1h-5.5v-6h-5v6H4a1 1 0 0 1-1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+
+      <div class="network-wrap">
+        <svg id="network" viewBox="34 62 912 604" role="img" aria-label="A semantic network centered on king"></svg>
+      </div>
+
+      <aside class="tooltip" id="tooltip" aria-live="polite"></aside>
+    </section>
+  </main>
+
+<script>
+const categories = {
+  royal: { label: "Royal", color: "#c7932f" },
+  place: { label: "Place", color: "#2d647f" },
+  concept: { label: "Concept", color: "#48715d" },
+  phonetic: { label: "Phonetic", color: "#6a5a8d" }
+};
+
+const words = [
+  { word: "king", x: 0, y: 0, category: "royal", note: "中心词：王、国王，也可指最重要的人或物。" },
+  { word: "queen", x: -0.18, y: 0.14, category: "royal", note: "王权角色，性别维度不同但语义距离很近。" },
+  { word: "monarch", x: 0.12, y: -0.08, category: "royal", note: "君主的抽象称谓，和 king 在政治身份上高度相近。" },
+  { word: "crown", x: -0.08, y: -0.27, category: "royal", note: "王权象征，比人物更偏物件。" },
+  { word: "throne", x: 0.24, y: -0.24, category: "royal", note: "王位与权力的物理/象征载体。" },
+  { word: "prince", x: -0.34, y: 0.06, category: "royal", note: "王室成员，低于 king 的继承位置。" },
+  { word: "princess", x: -0.4, y: 0.2, category: "royal", note: "王室成员，与 prince 成组出现。" },
+  { word: "royal", x: -0.02, y: -0.43, category: "royal", note: "直接描述王室属性的形容词。" },
+  { word: "sovereign", x: 0.26, y: -0.1, category: "royal", note: "主权者或最高统治者，更正式。" },
+  { word: "ruler", x: 0.34, y: 0.08, category: "royal", note: "统治者，语义比 king 更宽。" },
+  { word: "emperor", x: 0.46, y: -0.18, category: "royal", note: "帝王，权力范围通常更大。" },
+  { word: "lord", x: 0.18, y: 0.28, category: "royal", note: "贵族或领主，与阶层和权威相关。" },
+  { word: "kingdom", x: 0.36, y: -0.55, category: "place", note: "由 king 关联出的国家/领土概念。" },
+  { word: "United Kingdom", x: 0.62, y: -0.64, category: "place", note: "包含 kingdom 词形，同时是具体国家名称。" },
+  { word: "realm", x: 0.18, y: -0.58, category: "place", note: "王国、领域，偏文学和政治语义。" },
+  { word: "empire", x: 0.58, y: -0.36, category: "place", note: "帝国，与 emperor 和权力扩张相关。" },
+  { word: "castle", x: -0.18, y: -0.68, category: "place", note: "王室场景中的地点符号。" },
+  { word: "palace", x: -0.32, y: -0.56, category: "place", note: "王室居所，与 king 的场景关联很强。" },
+  { word: "court", x: 0.06, y: -0.66, category: "place", note: "宫廷，也可指法院；这里取王室场景义。" },
+  { word: "nation", x: 0.78, y: -0.36, category: "place", note: "国家概念，和 kingdom 同属政治地理。" },
+  { word: "England", x: 0.8, y: -0.58, category: "place", note: "与 United Kingdom 相关的地名节点。" },
+  { word: "power", x: 0.64, y: 0.1, category: "concept", note: "king 引申出的权力维度。" },
+  { word: "rule", x: 0.54, y: 0.0, category: "concept", note: "统治行为，与 ruler/sovereign 近。" },
+  { word: "authority", x: 0.68, y: -0.1, category: "concept", note: "权威，更抽象的 king 近邻。" },
+  { word: "lineage", x: -0.54, y: -0.2, category: "concept", note: "血统与继承，连接王室结构。" },
+  { word: "heir", x: -0.54, y: 0.04, category: "concept", note: "继承人，和 prince 及王位相邻。" },
+  { word: "Kong", x: -0.72, y: 0.32, category: "phonetic", note: "King Kong 的搭配近邻，偏短语联想。" },
+  { word: "ring", x: -0.76, y: 0.54, category: "phonetic", note: "与 king 押韵，音近但语义较远。" },
+  { word: "sing", x: -0.9, y: 0.38, category: "phonetic", note: "音形接近，语义距离明显更远。" },
+  { word: "queue", x: -0.86, y: 0.02, category: "phonetic", note: "词义上很远，放入网络用于对比：相似度主要来自弱联想而非王权语义。" }
+];
+
+const svg = document.querySelector("#network");
+const tooltip = document.querySelector("#tooltip");
+const state = { activeWord: "king", hasSelection: false };
+const bounds = { width: 980, height: 720, padX: 54, padY: 52 };
+const center = words.find((item) => item.word === "king");
+const minScore = 0.18;
+
+const meanings = {
+  "king": "国王",
+  "queen": "女王",
+  "monarch": "君主",
+  "crown": "王冠",
+  "throne": "王位",
+  "prince": "王子",
+  "princess": "公主",
+  "royal": "王室的",
+  "sovereign": "主权者",
+  "ruler": "统治者",
+  "emperor": "皇帝",
+  "lord": "领主",
+  "kingdom": "王国",
+  "United Kingdom": "英国",
+  "realm": "领域",
+  "empire": "帝国",
+  "castle": "城堡",
+  "palace": "宫殿",
+  "court": "宫廷",
+  "nation": "国家",
+  "England": "英格兰",
+  "power": "权力",
+  "rule": "统治",
+  "authority": "权威",
+  "lineage": "血统",
+  "heir": "继承人",
+  "Kong": "金刚",
+  "ring": "戒指",
+  "sing": "唱歌",
+  "queue": "队列"
+};
+
+function similarity(a, b) {
+  const dx = a.x - b.x;
+  const dy = a.y - b.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  return Math.max(0, 1 - distance / 1.15);
+}
+
+function point(item) {
+  return {
+    x: bounds.width / 2 + item.x * (bounds.width / 2 - bounds.padX),
+    y: bounds.height / 2 + item.y * (bounds.height / 2 - bounds.padY)
+  };
+}
+
+function showTooltip(item) {
+  const score = item.word === "king" ? 1 : similarity(center, item);
+  tooltip.classList.add("visible");
+  tooltip.innerHTML = `
+    <div class="tooltip-title">
+      <h2>${item.word} · ${meanings[item.word]}</h2>
+      <span class="score">${score.toFixed(2)}</span>
+    </div>
+    <p>${item.note}<br>颜色表示语义区域，线条粗细表示与 king 或相邻词之间的近似度。</p>
+  `;
+}
+
+function labelLines(item) {
+  const parts = item.word === "United Kingdom" ? ["United", "Kingdom"] : [item.word];
+  return [...parts, meanings[item.word]];
+}
+
+function renderNetwork() {
+  const active = words.find((item) => item.word === state.activeWord) || center;
+  const visible = words.filter((item) => item.word === "king" || similarity(center, item) >= minScore);
+  const visibleWords = new Set(visible.map((item) => item.word));
+  const edges = [];
+
+  visible.forEach((item) => {
+    if (item.word === "king") return;
+    const score = similarity(center, item);
+    if (score >= minScore) edges.push({ source: center, target: item, score });
+  });
+
+  visible.forEach((a, index) => {
+    visible.slice(index + 1).forEach((b) => {
+      if (a.word === "king" || b.word === "king") return;
+      const score = similarity(a, b);
+      if (score > 0.82) edges.push({ source: a, target: b, score: score * .62 });
+    });
+  });
+
+  svg.innerHTML = `
+    <line class="axis" x1="${bounds.padX}" y1="${bounds.height / 2}" x2="${bounds.width - bounds.padX}" y2="${bounds.height / 2}"></line>
+    <line class="axis" x1="${bounds.width / 2}" y1="${bounds.padY}" x2="${bounds.width / 2}" y2="${bounds.height - bounds.padY}"></line>
+    <text class="axis-label" x="${bounds.width - bounds.padX}" y="${bounds.height / 2 - 14}" text-anchor="end">royal / nation</text>
+    <text class="axis-label" x="${bounds.padX}" y="${bounds.height / 2 - 14}">phonetic / names</text>
+    <text class="axis-label" x="${bounds.width / 2 + 14}" y="${bounds.padY + 4}">daily / person</text>
+    <text class="axis-label" x="${bounds.width / 2 + 14}" y="${bounds.height - bounds.padY}">territory / institution</text>
+    <g class="edges"></g>
+    <g class="nodes"></g>
+    <g class="labels"></g>
+  `;
+
+  const edgeLayer = svg.querySelector(".edges");
+  const nodeLayer = svg.querySelector(".nodes");
+  const labelLayer = svg.querySelector(".labels");
+
+  edges.forEach((edge) => {
+    const source = point(edge.source);
+    const target = point(edge.target);
+    const linkedToActive = edge.source.word === active.word || edge.target.word === active.word || active.word === "king";
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("class", `edge ${linkedToActive ? "" : "dimmed"}`);
+    line.setAttribute("x1", source.x);
+    line.setAttribute("y1", source.y);
+    line.setAttribute("x2", target.x);
+    line.setAttribute("y2", target.y);
+    line.setAttribute("stroke", edge.source.word === "king" ? "rgba(199, 147, 47, .72)" : "rgba(45, 100, 127, .28)");
+    line.setAttribute("stroke-width", 1.2 + edge.score * 5.4);
+    edgeLayer.appendChild(line);
+  });
+
+  visible.forEach((item) => {
+    const p = point(item);
+    const score = item.word === "king" ? 1 : similarity(center, item);
+    const linked = item.word === active.word || item.word === "king" || similarity(item, active) > .7 || active.word === "king";
+    const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    const radius = item.word === "king" ? 42 : Math.max(30, 23 + score * 20);
+    group.setAttribute("class", `node ${item.word === "king" ? "center" : ""} ${item.word === active.word ? "active" : ""} ${linked ? "" : "dimmed"}`);
+    group.setAttribute("transform", `translate(${p.x} ${p.y})`);
+    group.setAttribute("tabindex", "0");
+    group.setAttribute("role", "button");
+    group.setAttribute("aria-label", `${item.word}, similarity ${score.toFixed(2)}`);
+    group.dataset.word = item.word;
+    group.innerHTML = `<circle r="${radius}" fill="${categories[item.category].color}"></circle>`;
+    group.addEventListener("click", () => {
+      state.activeWord = item.word;
+      state.hasSelection = true;
+      render();
+      showTooltip(item);
+    });
+    group.addEventListener("mouseenter", () => showTooltip(item));
+    group.addEventListener("focus", () => showTooltip(item));
+    nodeLayer.appendChild(group);
+
+    const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    label.setAttribute("class", `node-label ${item.word === "king" ? "center" : ""} ${linked ? "" : "dimmed"}`);
+    label.setAttribute("x", p.x);
+    label.setAttribute("y", p.y - (labelLines(item).length - 1) * 6);
+    label.setAttribute("text-anchor", "middle");
+    label.setAttribute("dominant-baseline", "middle");
+    label.innerHTML = labelLines(item).map((line, index) => {
+      const className = index === labelLines(item).length - 1 ? ' class="meaning"' : "";
+      const dy = index === 0 ? 0 : 13;
+      return `<tspan${className} x="${p.x}" dy="${dy}">${line}</tspan>`;
+    }).join("");
+    labelLayer.appendChild(label);
+  });
+
+  if (!visibleWords.has(state.activeWord)) state.activeWord = "king";
+  if (state.hasSelection) {
+    showTooltip(words.find((item) => item.word === state.activeWord) || center);
+  }
+}
+
+function render() {
+  renderNetwork();
+}
+
+render();
+</script>
+</body>
+</html>
