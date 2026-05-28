@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>俄罗斯方块</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='50%25' y='75%25' text-anchor='middle' font-size='52'>🧩</text></svg>">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: #0a0a1a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(0,255,255,.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(255,0,255,.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 80%, rgba(255,255,0,.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0;
+  min-height: 0;
+}
+#board {
+  border: 2px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  background: #0d0d1f;
+  box-shadow:
+    inset 0 0 60px rgba(0,255,255,.03),
+    0 0 40px rgba(0,255,255,.06),
+    0 0 80px rgba(0,0,0,.3);
+}
+/* Bottom info bar */
+.info-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 14px 20px;
+  background: rgba(13,13,35,.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,.06);
+  overflow-x: auto;
+}
+.info-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+  white-space: nowrap;
+  transition: border-color .3s, box-shadow .3s;
+}
+.info-card:hover {
+  border-color: rgba(255,255,255,.12);
+  box-shadow: 0 0 20px rgba(0,255,255,.05);
+}
+#nextCanvas {
+  display: block;
+  border-radius: 4px;
+}
+.info-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: rgba(255,255,255,.3);
+  margin-bottom: 2px;
+}
+.score-val {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0ff;
+  text-shadow: 0 0 20px rgba(0,255,255,.4);
+  line-height: 1;
+}
+.line-val {
+  font-size: 26px;
+  font-weight: 800;
+  color: #f0f;
+  text-shadow: 0 0 20px rgba(255,0,255,.4);
+  line-height: 1;
+}
+.level-val {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ff0;
+  text-shadow: 0 0 20px rgba(255,255,0,.4);
+  line-height: 1;
+}
+.combo-val {
+  font-size: 26px;
+  font-weight: 800;
+  color: #f80;
+  text-shadow: 0 0 20px rgba(255,136,0,.5);
+  line-height: 1;
+}
+.bomb-meter { display: flex; gap: 5px; }
+.bomb-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+  border: 1.5px solid rgba(255,255,255,.15);
+  transition: all .3s;
+}
+.bomb-dot.charged {
+  background: #f84;
+  border-color: #f84;
+  box-shadow: 0 0 10px rgba(255,136,64,.6);
+}
+.bomb-dot.ready {
+  background: #f40;
+  border-color: #f40;
+  box-shadow: 0 0 16px rgba(255,64,0,.8);
+  animation: pulse .5s ease-in-out infinite alternate;
+}
+@keyframes pulse {
+  from { box-shadow: 0 0 8px rgba(255,64,0,.5); }
+  to { box-shadow: 0 0 22px rgba(255,64,0,1); }
+}
+.controls-help {
+  font-size: 11px;
+  color: rgba(255,255,255,.3);
+  line-height: 1.9;
+}
+.controls-help kbd {
+  display: inline-block;
+  min-width: 22px;
+  padding: 2px 6px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 4px;
+  background: rgba(255,255,255,.04);
+  font-family: monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,.5);
+  text-align: center;
+}
+.btn {
+  display: inline-block;
+  padding: 9px 18px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  background: rgba(233,69,96,.15);
+  color: #e94560;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all .25s;
+  white-space: nowrap;
+}
+.btn:hover {
+  background: rgba(233,69,96,.3);
+  border-color: #e94560;
+  box-shadow: 0 0 24px rgba(233,69,96,.2);
+  transform: translateY(-1px);
+}
+.btn.music-btn {
+  background: rgba(46,114,114,.15);
+  color: #3ecfcf;
+}
+.btn.music-btn:hover {
+  background: rgba(46,114,114,.3);
+  border-color: #3ecfcf;
+  box-shadow: 0 0 24px rgba(62,207,207,.2);
+}
+/* Game Over overlay */
+#gameOver {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+.go-box {
+  padding: 42px 52px;
+  border-radius: 16px;
+  background: rgba(22,25,50,.95);
+  border: 1px solid rgba(255,255,255,.1);
+  color: #eee;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 40px rgba(233,69,96,.1);
+  animation: popIn .3s ease;
+}
+@keyframes popIn {
+  from { transform: scale(.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.go-box h2 {
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #e94560;
+  text-shadow: 0 0 30px rgba(233,69,96,.4);
+}
+.go-box .final {
+  font-size: 18px;
+  margin-bottom: 24px;
+  color: rgba(255,255,255,.5);
+}
+.go-box .final strong {
+  color: #fff;
+  font-size: 26px;
+}
+.go-box .btn {
+  padding: 12px 42px;
+  font-size: 16px;
+}
+/* Back home */
+.back-home {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  color: rgba(255,255,255,.25);
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 1px;
+  transition: color .2s;
+  z-index: 5;
+}
+.back-home:hover { color: rgba(255,255,255,.7); }
+/* Pause indicator */
+#pauseOverlay {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  border-radius: 8px;
+  font-size: 28px;
+  font-weight: 800;
+  color: rgba(255,255,255,.5);
+  letter-spacing: 6px;
+}
+</style>
+</head>
+<body>
+
+<a class="back-home" href="../">← 首页</a>
+
+<div class="main">
+  <div style="position:relative;display:inline-block;">
+    <canvas id="board"></canvas>
+    <div id="pauseOverlay">已暂停</div>
+  </div>
+</div>
+
+<div class="info-bar">
+  <div class="info-card">
+    <canvas id="nextCanvas" width="72" height="72"></canvas>
+  </div>
+  <div class="info-card" style="flex-direction:column;align-items:flex-start;gap:0;">
+    <div class="info-label">分数</div>
+    <div class="score-val" id="score">0</div>
+  </div>
+  <div class="info-card" style="flex-direction:column;align-items:flex-start;gap:0;">
+    <div class="info-label">行数</div>
+    <div class="line-val" id="lines">0</div>
+  </div>
+  <div class="info-card" style="flex-direction:column;align-items:flex-start;gap:0;">
+    <div class="info-label">等级</div>
+    <div class="level-val" id="level">1</div>
+  </div>
+  <div class="info-card" id="comboCard" style="flex-direction:column;align-items:flex-start;gap:0;display:none;">
+    <div class="info-label">连击</div>
+    <div class="combo-val" id="comboDisplay">0</div>
+  </div>
+  <div class="info-card" id="bombCard" style="flex-direction:column;align-items:flex-start;gap:4px;">
+    <div class="info-label">炸弹 <kbd>B</kbd></div>
+    <div class="bomb-meter" id="bombMeter">
+      <span class="bomb-dot"></span><span class="bomb-dot"></span><span class="bomb-dot"></span><span class="bomb-dot"></span>
+    </div>
+  </div>
+  <div class="info-card">
+    <div class="controls-help">
+      <kbd>←→</kbd>移动 &nbsp;<kbd>↓</kbd>软降<br>
+      <kbd>↑</kbd>旋转 &nbsp;<kbd>Space</kbd>硬降<br>
+      <kbd>B</kbd>炸弹
+    </div>
+  </div>
+  <button class="btn" id="restartBtn">重新开始</button>
+  <button class="btn music-btn" id="musicBtn">🔊 开</button>
+</div>
+
+<div id="gameOver">
+  <div class="go-box">
+    <h2>游戏结束</h2>
+    <p class="final">最终分数 <strong id="finalScore">0</strong></p>
+    <button class="btn" id="playAgain">再来一局</button>
+  </div>
+</div>
+
+<script>
+const COLS = 12;
+const ROWS = 24;
+let BLOCK;
+
+const COLORS = [
+  null,
+  '#0ff',
+  '#06f',
+  '#f80',
+  '#ff0',
+  '#0f0',
+  '#f0f',
+  '#f22',
+  '#bbb',
+  '#fa0',
+];
+
+const PIECES = [
+  null,
+  [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
+  [[2,0,0],[2,2,2],[0,0,0]],
+  [[0,0,3],[3,3,3],[0,0,0]],
+  [[4,4],[4,4]],
+  [[0,5,5],[5,5,0],[0,0,0]],
+  [[0,6,0],[6,6,6],[0,0,0]],
+  [[7,7,0],[0,7,7],[0,0,0]],
+  [[8]],
+  [[9,0],[9,9]],
+];
+
+const WALL_KICKS = {
+  normal: [
+    [[0,0],[-1,0],[-1,1],[0,-2],[-1,-2]],
+    [[0,0],[1,0],[1,-1],[0,2],[1,2]],
+    [[0,0],[1,0],[1,1],[0,-2],[1,-2]],
+    [[0,0],[-1,0],[-1,-1],[0,2],[-1,2]],
+  ],
+  i: [
+    [[0,0],[-2,0],[1,0],[-2,-1],[1,2]],
+    [[0,0],[-1,0],[2,0],[-1,2],[2,-1]],
+    [[0,0],[2,0],[-1,0],[2,1],[-1,-2]],
+    [[0,0],[1,0],[-2,0],[1,-2],[-2,1]],
+  ],
+};
+
+const board = document.getElementById('board');
+const ctx = board.getContext('2d');
+const nextCanvas = document.getElementById('nextCanvas');
+const nextCtx = nextCanvas.getContext('2d');
+const pauseOverlay = document.getElementById('pauseOverlay');
+
+const scoreEl = document.getElementById('score');
+const linesEl = document.getElementById('lines');
+const levelEl = document.getElementById('level');
+const gameOverEl = document.getElementById('gameOver');
+const finalScoreEl = document.getElementById('finalScore');
+
+let grid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+let score = 0;
+let lines = 0;
+let level = 1;
+let piece = null;
+let pieceX = 0, pieceY = 0;
+let pieceRot = 0;
+let nextType = 0;
+let animationId = null;
+let dropInterval = 800;
+let lastDrop = 0;
+let paused = false;
+let gameRunning = false;
+let clearingLines = [];
+let clearAnim = 0;
+let combo = 0;
+let bombCharges = 0;
+const BOMB_MAX = 4;
+let bombFlash = 0;
+let bombFX = 0, bombFY = 0;
+
+// === Audio ===
+let audioCtx = null;
+let musicOn = true;
+let musicGain = null;
+let musicTimeout = null;
+const bpm = 140;
+let audioUnlocked = false;
+
+const MELODY = [
+  [659,1],[494,.5],[523,.5],[587,1],[523,.5],[494,.5],
+  [440,1],[440,.5],[523,.5],[659,1],[587,.5],[523,.5],
+  [494,1.5],[523,.25],[587,.5],[659,1],[523,1],[440,1],
+  [440,.5],[0,.5],[587,1.5],[698,.5],[659,1.5],[587,.5],
+  [523,.75],[494,.25],[523,.5],[587,1],[523,1],[494,1],[440,1],
+];
+const MELODY_BEATS = 23.75;
+
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  musicGain = audioCtx.createGain();
+  musicGain.gain.value = 0.07;
+  musicGain.connect(audioCtx.destination);
+}
+
+function unlockAudio() {
+  if (audioUnlocked) return;
+  if (!audioCtx) initAudio();
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume().then(() => {
+      audioUnlocked = true;
+      if (gameRunning && musicOn) playMusic();
+    });
+  } else {
+    audioUnlocked = true;
+    if (gameRunning && musicOn) playMusic();
+  }
+}
+
+['keydown','click','touchstart'].forEach(evt => {
+  document.addEventListener(evt, unlockAudio);
+});
+
+function playNote(freq, startTime, duration, gainVal = 0.12) {
+  if (!audioCtx || !musicOn) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'square';
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(gainVal, startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.connect(gain);
+  gain.connect(musicGain);
+  osc.start(startTime);
+  osc.stop(startTime + duration);
+}
+
+function sfx(type) {
+  if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  const mk = (f,ty,d,gv,t0) => {
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = ty; o.frequency.value = f;
+    g.gain.setValueAtTime(gv, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + d);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t0); o.stop(t0 + d);
+  };
+  if (type === 'move') mk(220,'square',.04,.06,t);
+  else if (type === 'rotate') mk(420,'square',.05,.06,t);
+  else if (type === 'drop') mk(80,'triangle',.15,.15,t);
+  else if (type === 'clear') {
+    for (let i = 0; i < 5; i++) mk(440*Math.pow(2,i/4),'square',.1,.08,t+i*.06);
+  } else if (type === 'gameover') {
+    [440,370,311,261].forEach((f,i) => mk(f,'sawtooth',.25,.1,t+i*.2));
+  } else if (type === 'levelup') {
+    [523,659,784,1047].forEach((f,i) => mk(f,'square',.15,.08,t+i*.08));
+  } else if (type === 'bomb') {
+    for (let i = 0; i < 8; i++)
+      mk(30+Math.random()*80,'sawtooth',.2,.08,t+i*.025);
+  }
+}
+
+function playMusic() {
+  if (!audioCtx || !musicOn) return;
+  const beat = 60 / bpm;
+  let time = audioCtx.currentTime + 0.05;
+  for (let i = 0; i < MELODY.length; i++) {
+    const [freq, dur] = MELODY[i];
+    if (freq > 0) playNote(freq, time, dur * beat * 0.85);
+    time += dur * beat;
+  }
+  const loopMs = (MELODY_BEATS * beat * 1000) - 50;
+  musicTimeout = setTimeout(playMusic, loopMs);
+}
+
+function stopMusic() { clearTimeout(musicTimeout); }
+
+function toggleMusic() {
+  initAudio();
+  musicOn = !musicOn;
+  if (musicOn) { if (audioUnlocked) playMusic(); }
+  else stopMusic();
+}
+
+// === Sizing ===
+function resizeBoard() {
+  const barH = document.querySelector('.info-bar').offsetHeight;
+  const availH = window.innerHeight - barH - 30;
+  BLOCK = Math.floor(availH / ROWS);
+  board.width = BLOCK * COLS;
+  board.height = BLOCK * ROWS;
+}
+
+window.addEventListener('resize', () => { resizeBoard(); drawBoard(); });
+resizeBoard();
+
+// === Game Logic ===
+function randomPiece() { return Math.floor(Math.random() * 9) + 1; }
+function getShape(type) { return PIECES[type].map(r => [...r]); }
+
+function rotateCW(shape) {
+  const n = shape.length;
+  const out = Array.from({ length: n }, () => Array(n).fill(0));
+  for (let r = 0; r < n; r++)
+    for (let c = 0; c < n; c++)
+      out[c][n - 1 - r] = shape[r][c];
+  return out;
+}
+
+function collides(shape, px, py) {
+  for (let r = 0; r < shape.length; r++) {
+    for (let c = 0; c < shape[r].length; c++) {
+      if (!shape[r][c]) continue;
+      const x = px + c, y = py + r;
+      if (x < 0 || x >= COLS || y >= ROWS) return true;
+      if (y < 0) continue;
+      if (grid[y][x]) return true;
+    }
+  }
+  return false;
+}
+
+function kickTable(type) { return type === 1 ? WALL_KICKS.i : WALL_KICKS.normal; }
+
+function tryRotate(shape, px, py, fromRot, toRot) {
+  const rotated = rotateCW(shape);
+  if (piece.type === 8) return { shape: rotated, x: px, y: py, rot: toRot };
+  const kicks = kickTable(piece.type)[fromRot] || [[0,0]];
+  for (const [kx, ky] of kicks) {
+    if (!collides(rotated, px + kx, py + ky))
+      return { shape: rotated, x: px + kx, y: py + ky, rot: toRot };
+  }
+  return null;
+}
+
+function spawn() {
+  piece = { type: nextType || randomPiece(), shape: getShape(nextType || randomPiece()) };
+  nextType = randomPiece();
+  pieceRot = 0;
+  pieceX = Math.floor((COLS - piece.shape[0].length) / 2);
+  pieceY = 0;
+  if (collides(piece.shape, pieceX, pieceY)) gameOver();
+}
+
+function lock() {
+  for (let r = 0; r < piece.shape.length; r++) {
+    for (let c = 0; c < piece.shape[r].length; c++) {
+      if (!piece.shape[r][c]) continue;
+      const y = pieceY + r, x = pieceX + c;
+      if (y < 0) { gameOver(); return; }
+      grid[y][x] = piece.type;
+    }
+  }
+  clearLines();
+  spawn();
+}
+
+function clearLines() {
+  clearingLines = [];
+  for (let r = 0; r < ROWS; r++)
+    if (grid[r].every(c => c)) clearingLines.push(r);
+  if (clearingLines.length) {
+    clearAnim = 8;
+    lastDrop = performance.now() + 600;
+    return;
+  }
+  combo = 0;
+  commitClear();
+}
+
+function commitClear() {
+  const count = clearingLines.length;
+  if (!count) return;
+  combo++;
+  score += [0,100,300,500,800][count] * level;
+  if (combo > 1) score += combo * 50 * level;
+  const oldLv = level;
+  lines += count;
+  level = Math.floor(lines / 10) + 1;
+  dropInterval = Math.max(40, 800 - (level - 1) * 55);
+  for (let i = 0; i < count; i++) sfx('clear');
+  bombCharges = Math.min(BOMB_MAX, bombCharges + count);
+  if (level > oldLv) sfx('levelup');
+  for (const r of clearingLines) {
+    grid.splice(r, 1);
+    grid.unshift(Array(COLS).fill(0));
+  }
+  clearingLines = [];
+  updateUI();
+}
+
+function getGhostY() {
+  if (!piece) return pieceY;
+  let gy = pieceY;
+  while (!collides(piece.shape, pieceX, gy+1)) gy++;
+  return gy;
+}
+
+function detonate() {
+  if (!gameRunning || paused || clearingLines.length) return;
+  if (bombCharges < BOMB_MAX) return;
+  if (!piece) return;
+  const gy = getGhostY();
+  const cx = pieceX + Math.floor(piece.shape[0].length / 2);
+  const cy = gy + Math.floor(piece.shape.length / 2);
+  bombCharges = 0;
+  bombFlash = 8;
+  bombFX = cx; bombFY = cy;
+  for (let r = cy - 1; r <= cy + 1; r++) {
+    for (let c = cx - 1; c <= cx + 1; c++) {
+      if (r >= 0 && r < ROWS && c >= 0 && c < COLS) grid[r][c] = 0;
+    }
+  }
+  sfx('bomb');
+}
+
+function moveDown() {
+  if (!gameRunning || paused || clearingLines.length) return;
+  if (!collides(piece.shape, pieceX, pieceY + 1)) pieceY++;
+  else lock();
+}
+function hardDrop() {
+  if (!gameRunning || paused || clearingLines.length) return;
+  while (!collides(piece.shape, pieceX, pieceY + 1)) { pieceY++; score += 2; }
+  sfx('drop'); lock();
+}
+function moveLeft() {
+  if (!gameRunning || paused || clearingLines.length) return;
+  if (!collides(piece.shape, pieceX - 1, pieceY)) { pieceX--; sfx('move'); }
+}
+function moveRight() {
+  if (!gameRunning || paused || clearingLines.length) return;
+  if (!collides(piece.shape, pieceX + 1, pieceY)) { pieceX++; sfx('move'); }
+}
+function rotate() {
+  if (!gameRunning || paused || clearingLines.length) return;
+  const r = tryRotate(piece.shape, pieceX, pieceY, pieceRot, (pieceRot+1)%4);
+  if (r) { piece.shape=r.shape; pieceX=r.x; pieceY=r.y; pieceRot=r.rot; sfx('rotate'); }
+}
+
+function updateUI() {
+  scoreEl.textContent = score;
+  linesEl.textContent = lines;
+  levelEl.textContent = level;
+  const cd = document.getElementById('comboCard');
+  if (combo > 1) {
+    cd.style.display = '';
+    document.getElementById('comboDisplay').textContent = combo + '×';
+  } else {
+    cd.style.display = 'none';
+  }
+  const dots = document.querySelectorAll('#bombMeter .bomb-dot');
+  dots.forEach((d, i) => {
+    d.className = 'bomb-dot';
+    if (bombCharges >= BOMB_MAX) d.classList.add('ready');
+    else if (i < bombCharges) d.classList.add('charged');
+  });
+}
+
+// === Drawing ===
+function drawBlock(context, x, y, colorIdx, alpha = 1) {
+  const b = BLOCK, s = Math.max(1, Math.floor(BLOCK / 14));
+  context.globalAlpha = alpha;
+  context.fillStyle = COLORS[colorIdx];
+  context.fillRect(x + s, y + s, b - s*2, b - s*2);
+  // Highlight
+  context.fillStyle = 'rgba(255,255,255,.18)';
+  context.fillRect(x + s, y + s, b - s*2, s*2);
+  context.fillRect(x + s, y + s, s*2, b - s*2);
+  // Shadow
+  context.fillStyle = 'rgba(0,0,0,.22)';
+  context.fillRect(x + s, y + b - s*3, b - s*2, s*2);
+  context.fillRect(x + b - s*3, y + s, s*2, b - s*2);
+  context.globalAlpha = 1;
+}
+
+function drawGrid() {
+  ctx.strokeStyle = 'rgba(255,255,255,.03)';
+  ctx.lineWidth = 0.5;
+  for (let r = 0; r <= ROWS; r++) {
+    ctx.beginPath(); ctx.moveTo(0, r*BLOCK); ctx.lineTo(COLS*BLOCK, r*BLOCK); ctx.stroke();
+  }
+  for (let c = 0; c <= COLS; c++) {
+    ctx.beginPath(); ctx.moveTo(c*BLOCK, 0); ctx.lineTo(c*BLOCK, ROWS*BLOCK); ctx.stroke();
+  }
+}
+
+function drawBoard() {
+  ctx.clearRect(0, 0, board.width, board.height);
+  drawGrid();
+  // Placed blocks
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (!grid[r][c]) continue;
+      const a = clearingLines.includes(r) ? 1 - clearAnim / 8 : 1;
+      drawBlock(ctx, c*BLOCK, r*BLOCK, grid[r][c], a);
+    }
+  }
+  // Bomb flash
+  if (bombFlash > 0 && piece) {
+    ctx.fillStyle = `rgba(255,200,80,${bombFlash / 12})`;
+    for (let r = bombFY - 1; r <= bombFY + 1; r++) {
+      for (let c = bombFX - 1; c <= bombFX + 1; c++) {
+        if (r >= 0 && r < ROWS && c >= 0 && c < COLS)
+          ctx.fillRect(c*BLOCK+1, r*BLOCK+1, BLOCK-2, BLOCK-2);
+      }
+    }
+  }
+  // Ghost
+  if (piece && gameRunning && !paused && !clearingLines.length) {
+    const gy = getGhostY();
+    if (gy !== pieceY) {
+      for (let r = 0; r < piece.shape.length; r++) {
+        for (let c = 0; c < piece.shape[r].length; c++) {
+          if (!piece.shape[r][c]) continue;
+          ctx.strokeStyle = COLORS[piece.type];
+          ctx.globalAlpha = 0.3;
+          ctx.lineWidth = Math.max(1, BLOCK/20);
+          const s = Math.max(1, Math.floor(BLOCK/14));
+          ctx.strokeRect((pieceX+c)*BLOCK+s, (gy+r)*BLOCK+s, BLOCK-s*2, BLOCK-s*2);
+          ctx.globalAlpha = 1;
+        }
+      }
+    }
+  }
+  // Active piece
+  if (piece && gameRunning && !clearingLines.length) {
+    for (let r = 0; r < piece.shape.length; r++) {
+      for (let c = 0; c < piece.shape[r].length; c++) {
+        if (!piece.shape[r][c]) continue;
+        if (pieceY + r < 0) continue;
+        drawBlock(ctx, (pieceX+c)*BLOCK, (pieceY+r)*BLOCK, piece.type);
+      }
+    }
+  }
+}
+
+function drawNext() {
+  const size = 72;
+  nextCanvas.width = nextCanvas.height = size;
+  const shape = PIECES[nextType];
+  const n = shape.length;
+  const cell = Math.floor(size / (n + 0.5));
+  const ox = (size - n * cell) / 2;
+  const oy = (size - n * cell) / 2;
+  nextCtx.clearRect(0, 0, size, size);
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      if (!shape[r][c]) continue;
+      const x = ox + c * cell, y = oy + r * cell;
+      nextCtx.fillStyle = COLORS[nextType];
+      nextCtx.fillRect(x+1, y+1, cell-2, cell-2);
+      nextCtx.fillStyle = 'rgba(255,255,255,.15)';
+      nextCtx.fillRect(x+1, y+1, cell-2, 3);
+      nextCtx.fillStyle = 'rgba(0,0,0,.2)';
+      nextCtx.fillRect(x+1, y+cell-4, cell-2, 3);
+    }
+  }
+}
+
+// === Game Loop ===
+function gameLoop(ts) {
+  if (!gameRunning) return;
+  animationId = requestAnimationFrame(gameLoop);
+  if (clearingLines.length) {
+    if (--clearAnim <= 0) commitClear();
+  } else if (!paused && ts - lastDrop > dropInterval) {
+    moveDown();
+    lastDrop = ts;
+  }
+  if (bombFlash > 0) bombFlash--;
+  drawBoard();
+  updateUI();
+}
+
+function gameOver() {
+  gameRunning = false;
+  cancelAnimationFrame(animationId);
+  stopMusic();
+  sfx('gameover');
+  finalScoreEl.textContent = score;
+  gameOverEl.style.display = 'flex';
+}
+
+function startGame() {
+  stopMusic();
+  initAudio();
+  resizeBoard();
+  grid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+  score = 0; lines = 0; level = 1;
+  dropInterval = 800; lastDrop = 0;
+  paused = false;
+  clearingLines = []; clearAnim = 0; combo = 0; bombCharges = 0; bombFlash = 0; bombFX = 0; bombFY = 0;
+  nextType = randomPiece();
+  gameRunning = true;
+  gameOverEl.style.display = 'none';
+  pauseOverlay.style.display = 'none';
+  updateUI(); spawn(); drawNext(); drawBoard();
+  if (animationId) cancelAnimationFrame(animationId);
+  lastDrop = performance.now();
+  animationId = requestAnimationFrame(gameLoop);
+  if (audioUnlocked && musicOn) playMusic();
+}
+
+function restart() { startGame(); }
+
+// === Controls ===
+document.addEventListener('keydown', e => {
+  if (!gameRunning) return;
+  if (e.key === 'p' || e.key === 'P') {
+    paused = !paused;
+    pauseOverlay.style.display = paused ? 'flex' : 'none';
+    e.preventDefault();
+    return;
+  }
+  if (paused) return;
+  switch (e.key) {
+    case 'ArrowLeft': e.preventDefault(); moveLeft(); break;
+    case 'ArrowRight': e.preventDefault(); moveRight(); break;
+    case 'ArrowDown': e.preventDefault(); moveDown(); break;
+    case 'ArrowUp': e.preventDefault(); rotate(); break;
+    case ' ': e.preventDefault(); hardDrop(); break;
+    case 'b': case 'B': e.preventDefault(); detonate(); break;
+  }
+});
+
+document.getElementById('restartBtn').addEventListener('click', restart);
+document.getElementById('playAgain').addEventListener('click', startGame);
+document.getElementById('musicBtn').addEventListener('click', () => {
+  toggleMusic();
+  document.getElementById('musicBtn').innerHTML = musicOn ? '🔊 开' : '🔇 关';
+});
+
+// Touch
+let tsX=0, tsY=0, tsT=0;
+board.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const t = e.touches[0];
+  tsX=t.clientX; tsY=t.clientY; tsT=Date.now();
+  if (e.touches.length > 1) hardDrop();
+});
+board.addEventListener('touchend', e => {
+  e.preventDefault();
+  const t = e.changedTouches[0];
+  const dx=t.clientX-tsX, dy=t.clientY-tsY, dt=Date.now()-tsT;
+  if (Math.abs(dx)<20 && Math.abs(dy)<20 && dt<200) rotate();
+  else if (dy>40 && dt<300) hardDrop();
+  else if (dx>20) moveRight();
+  else if (dx<-20) moveLeft();
+});
+
+startGame();
+</script>
+</body>
+</html>
