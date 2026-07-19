@@ -235,11 +235,30 @@
       display: inline-block;
     }
 
+    /* Handle white logos in light mode by adding a soft gray background badge */
+    .invert-in-light {
+      background-color: light-dark(#94a3b8, transparent);
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+
+    .entry-right {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
     .entry-date {
       font-size: 0.95rem;
       font-weight: 500;
       font-variant-numeric: tabular-nums;
       color: var(--text-color);
+    }
+
+    .inline-subtitle {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: light-dark(#2563eb, #60a5fa);
     }
 
     .entry-subtitle {
@@ -504,10 +523,12 @@
       <div class="entry">
         <div class="entry-header">
           <span class="entry-title">理想汽车<img src="https://www.lixiang.com/favicon.ico" alt="理想汽车 Logo" class="inline-logo"></span>
-          <span class="entry-date">2022.01 - 至今</span>
+          <div class="entry-right">
+            <span class="inline-subtitle">销售研发团队负责人</span>
+            <span class="entry-date">2022.01 - 至今</span>
+          </div>
         </div>
-        <div class="entry-subtitle">技术Leader | 销售研发团队负责人</div>
-        <p class="entry-summary">负责销售研发团队的技术管理与架构规划，管辖营销获客、线索流转、零售转化、车辆交付及车主运营等全价值流核心业务系统。</p>
+        <p class="entry-summary">负责销售研发团队的技术管理与架构规划，统筹营销获客、线索流转、零售转化、车辆交付及车主运营等全价值流核心业务系统的建设。</p>
         <ul class="entry-list">
           <li><strong>团队管理：</strong>全面负责销售研发团队的技术管理与研发效能提升，基于 AI Coding 范式端到端提升研发效率。</li>
           <li><strong>价值流管理：</strong>主导 M2L、L2D 两大核心价值流环节，负责营销、线索、零售转化、交付、车主运营等全业务流程管理。</li>
@@ -520,10 +541,12 @@
       <div class="entry">
         <div class="entry-header">
           <span class="entry-title">亚朵<img src="atour.png" alt="亚朵 Logo" class="inline-logo"></span>
-          <span class="entry-date">2018.01 - 2021.12</span>
+          <div class="entry-right">
+            <span class="inline-subtitle">技术总监 | 后端+数据研发团队负责人</span>
+            <span class="entry-date">2018.01 - 2021.12</span>
+          </div>
         </div>
-        <div class="entry-subtitle">技术总监 | 后端业务负责人、数据研发团队负责人</div>
-        <p class="entry-summary">全面负责后端研发与大数据算法团队，管辖亚朵 APP 微服务群、数据研发体系、酒店报价及交易中台等核心业务版块。</p>
+        <p class="entry-summary">全面负责后端研发与大数据算法团队，统筹亚朵 APP 微服务群、数据研发体系、酒店报价等核心业务版块。从 0 到 1 搭建了亚朵的研发体系，并完成了 C 端、B 端及中台业务系统的建设。</p>
         <ul class="entry-list">
           <li>设计并落地酒店报价中台服务，对报价、交易及用户体系等核心模块进行平台化重构。</li>
           <li>管理大数据体系研发及算法业务，通过数据分析与模型优化赋能商业化决策。</li>
@@ -536,9 +559,11 @@
       <div class="entry">
         <div class="entry-header">
           <span class="entry-title">去哪儿网<img src="https://www.qunar.com/favicon.ico" alt="去哪儿网 Logo" class="inline-logo"></span>
-          <span class="entry-date">2014.04 - 2018.01</span>
+          <div class="entry-right">
+            <span class="inline-subtitle">技术Leader</span>
+            <span class="entry-date">2014.04 - 2018.01</span>
+          </div>
         </div>
-        <div class="entry-subtitle">技术TL</div>
         <ul class="entry-list">
           <li><strong>团队管理：</strong>负责酒店列表 Rank 团队及检索系统的开发管理与业务指标达成。</li>
           <li><strong>架构设计：</strong>主导报价中心架构整合与重构，设计图状执行框架（Graph Execution Engine）以并行调度复杂业务逻辑；独立设计酒店检索转化率毫秒级实时监控系统。</li>
@@ -551,9 +576,11 @@
       <div class="entry">
         <div class="entry-header">
           <span class="entry-title">搜狗<img src="https://www.sogou.com/images/logo/new/favicon.ico?v=4" alt="搜狗 Logo" class="inline-logo"></span>
-          <span class="entry-date">2012.01 - 2014.04</span>
+          <div class="entry-right">
+            <span class="inline-subtitle">研发工程师</span>
+            <span class="entry-date">2012.01 - 2014.04</span>
+          </div>
         </div>
-        <div class="entry-subtitle">开发工程师</div>
         <ul class="entry-list">
           <li>主导开发搜狗消息客户端，基于 DuiLib 渲染库和 Chrome 浏览器内核，实现内部 OA 系统的消息高效推送与网页化消息详情渲染。</li>
           <li>深度 Review 搜狗浏览器内核代码，整理并汇总浏览器内核技术文档及内部知识 Wiki。</li>
@@ -569,21 +596,23 @@
       <h2>教育背景</h2>
       <div class="entry">
         <div class="entry-header">
-          <span class="entry-title">山东科技大学<img src="https://www.sdust.edu.cn/images/logo.png" alt="山东科技大学 Logo" class="inline-logo"></span>
-          <span class="entry-date">2008 - 2012</span>
+          <span class="entry-title">山东科技大学<img src="https://www.sdust.edu.cn/images/logo.png" alt="山东科技大学 Logo" class="inline-logo invert-in-light"></span>
+          <div class="entry-right">
+            <span class="inline-subtitle">计算机科学与技术</span>
+            <span class="entry-date">2008 - 2012</span>
+          </div>
         </div>
-        <div class="entry-subtitle">学士学位 | 计算机科学与技术</div>
         <ul class="entry-list">
           <li>
             <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
-              <span><strong>英语水平:</strong> 英语六级 (CET-6 560分)</span>
+              <span class="award-name"><strong>英语六级</strong> (CET-6 560分)</span>
               <span class="award-date">2009.06</span>
             </div>
           </li>
           <li style="margin-top: 0.3rem;">
             <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
-              <span class="award-name"><strong>编程竞赛银牌</strong>，ACM/ICPC 国际大学生程序设计竞赛北京地区赛</span>
-              <span class="award-date">2011.10</span>
+              <span class="award-name"><strong>全国二等奖</strong>，全国大学生英语竞赛 (NECCS)</span>
+              <span class="award-date">2009.06</span>
             </div>
           </li>
           <li style="margin-top: 0.3rem;">
@@ -594,8 +623,8 @@
           </li>
           <li style="margin-top: 0.3rem;">
             <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
-              <span class="award-name"><strong>全国二等奖</strong>，全国大学生英语竞赛 (NECCS)</span>
-              <span class="award-date">2009.06</span>
+              <span class="award-name"><strong>编程竞赛银牌</strong>，ACM/ICPC 国际大学生程序设计竞赛北京地区赛</span>
+              <span class="award-date">2011.10</span>
             </div>
           </li>
         </ul>
@@ -606,8 +635,8 @@
     <section id="evaluation">
       <h2>个人评价</h2>
       <ul class="evaluation-list">
-        <li><strong>技术沉淀：</strong>十余年系统架构与工程实践积累，在垂直检索、多业务中台及微服务体系的规划与搭建方面具有丰富经验。</li>
-        <li><strong>团队管理：</strong>具备从0到1组建与管理后端研发团队的丰富经验。善于建立高效的项目流转机制与技术标准，推行基于 AI Coding 新范式的研发效能变革，实现端到端的敏捷价值交付；注重梯队建设与分享文化，持续提升团队的凝聚力与战斗力。</li>
+        <li><strong>技术沉淀：</strong>十余年系统架构与工程实践积累，在Agent建设、垂直检索、多业务中台及微服务体系的规划与搭建方面具有丰富经验。</li>
+        <li><strong>团队管理：</strong>具备从0到1组建与管理后端研发团队的丰富经验。推行基于 AI Coding 新范式的研发效能变革，实现端到端的敏捷价值交付；注重梯队建设与分享文化，持续提升团队的凝聚力与战斗力。</li>
         <li><strong>AI架构能力：</strong>具备深厚的 AI 应用实战经验，精通 LLM 工程化落地、向量检索及知识图谱技术。成功主导多个高复杂度业务 Agent 系统的架构规划与评测体系搭建，凭借敏锐的技术嗅觉，持续以 AI 创新赋能业务爆发与研发提效。</li>
       </ul>
     </section>
