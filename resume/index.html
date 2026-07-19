@@ -1,40 +1,618 @@
-CTYPE html>
-<html>
-	<head>
-		<link type="text/css" rel="stylesheet" href="stylesheet.css"/>
-		<title></title>
-	</head>
-	<body class="main">
-		<div id="header">
-			<p id="name">张方雪</p>
-			<a href="mailto:jackiesteed@163.com"><p id="email">jackiesteed@163.com</p></a>
-		</div>
-		<div class="left"></div>
-		<div class="right">
-			<h4>Experience</h4>
-			<p>搜索开发工程师, 去哪儿网 (2014.04 - 今)</p>
-			<ul>
-				<li>主导团购上单对接系统的开发和重构</li>
-				<li>负责酒店团购搜索的开发</li>
-			</ul>
-			
-			<p>工作流开发工程师, 搜狗 (2012.07 - 2014.04)</p>
-			<ul>
-				<li>主导OA系统消息提醒工具开发, 基于DuiLib(Windows界面库)</li>
-				<li>主导测试用例解析器的开发重构工作, 使用python完成.</li>
-			</ul>
-			<h4>技能</h4>
-			<p>语言: Java, Python, Javascript</p>
-			<p>熟悉acm相关算法</p>
-			<p>了解搜索排序算法</p>
-			
-			<h4>教育经历</h4>
-			<p>山东科技大学 计算机科学与技术 本科 (2008 - 2012)</p>
-			<p> ACM 银牌 北京和福州赛区 </p>
-		</div>
-		<div id="footer">
-			<p>Wechat: jackiesteed | Tel: 13521078475</p>
-		</div>
-	</body>
-</html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>张方雪 (Jackie) - 个人简历 | Technical Leader & Architect</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="张方雪 (Jackie) 的个人简历。技术Leader，前去哪儿架构师、亚朵技术总监，拥有丰富的销售研发团队管理、中台架构设计及搜索检索开发经验。">
+  <meta name="keywords" content="张方雪, Jackie, 简历, 技术Leader, 架构师, 亚朵, 理想汽车, 去哪儿">
+  <meta name="author" content="张方雪">
 
+  <!-- Google Fonts for Academic Serif Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Reset & CSS Variables */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      color-scheme: light dark;
+      
+      /* Typography */
+      --font-serif: 'Lora', 'Georgia', 'Times New Roman', -apple-system-ui-serif, ui-serif, serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      
+      /* Color Palette (Academic LaTeX feel, adaptive dark mode) */
+      --bg-color: light-dark(#f4f5f6, #121212);
+      --paper-bg: light-dark(#ffffff, #1a1a1a);
+      --text-color: light-dark(#1a1a1a, #e2e8f0);
+      --text-muted: light-dark(#555555, #94a3b8);
+      --primary-color: light-dark(#000000, #ffffff);
+      --rule-color: light-dark(#111111, #475569);
+      --link-color: light-dark(#0f4c81, #60a5fa);
+      --link-hover: light-dark(#002c53, #93c5fd);
+      --accent-bg: light-dark(#f8f9fa, #262626);
+      --shadow: light-dark(0 10px 30px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(0, 0, 0, 0.3));
+      
+      /* Spacing & Sizing */
+      --paper-width: 820px;
+      --paper-padding: 60px 80px;
+      --section-margin: 1.6rem;
+    }
+
+    /* Manual Theme Classes (triggered by JS) */
+    html.light-mode {
+      color-scheme: light;
+      --bg-color: #f4f5f6;
+      --paper-bg: #ffffff;
+      --text-color: #1a1a1a;
+      --text-muted: #555555;
+      --primary-color: #000000;
+      --rule-color: #111111;
+      --link-color: #0f4c81;
+      --link-hover: #002c53;
+      --accent-bg: #f8f9fa;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    html.dark-mode {
+      color-scheme: dark;
+      --bg-color: #121212;
+      --paper-bg: #1a1a1a;
+      --text-color: #e2e8f0;
+      --text-muted: #94a3b8;
+      --primary-color: #ffffff;
+      --rule-color: #475569;
+      --link-color: #60a5fa;
+      --link-hover: #93c5fd;
+      --accent-bg: #262626;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-serif);
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Resume Container (A4-like page layout on screen) */
+    .resume-container {
+      width: 100%;
+      max-width: var(--paper-width);
+      background-color: var(--paper-bg);
+      padding: var(--paper-padding);
+      box-shadow: var(--shadow);
+      border-radius: 4px;
+      position: relative;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+
+
+    /* Header Section */
+    header.resume-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      border-bottom: 1px dashed light-dark(#cccccc, #444444);
+      padding-bottom: 1.5rem;
+    }
+
+    .header-text {
+      text-align: left;
+      flex: 1;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.6rem;
+      color: var(--primary-color);
+      font-variant: small-caps;
+    }
+
+    .header-text h1 {
+      text-align: left;
+    }
+
+    .contact-info {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .header-photo {
+      margin-left: 2rem;
+      flex-shrink: 0;
+    }
+
+    .profile-photo {
+      width: 100px;
+      height: 125px;
+      object-fit: cover;
+      border: none;
+      border-radius: 2px;
+      box-shadow: light-dark(0 2px 8px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.3));
+    }
+
+    .contact-info a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .contact-info a:hover {
+      color: var(--link-color);
+      text-decoration: underline;
+    }
+
+    .contact-info span.divider {
+      user-select: none;
+      color: var(--rule-color);
+      opacity: 0.3;
+    }
+
+    .contact-info svg {
+      width: 14px;
+      height: 14px;
+      stroke-width: 1.8;
+      opacity: 0.8;
+    }
+
+    /* Section Styling (LaTeX LaTeX style hrule) */
+    section {
+      margin-bottom: var(--section-margin);
+    }
+
+    h2 {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary-color);
+      border-bottom: 1px solid var(--rule-color);
+      padding-bottom: 3px;
+      margin-bottom: 0.9rem;
+      margin-top: 1.4rem;
+      font-variant: small-caps;
+    }
+
+    /* Experience Entries */
+    .entry {
+      margin-bottom: 1.2rem;
+    }
+
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.15rem;
+    }
+
+    .entry-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .inline-logo {
+      height: 16px;
+      width: auto;
+      border-radius: 2px;
+      vertical-align: middle;
+      display: inline-block;
+    }
+
+    .entry-date {
+      font-size: 0.95rem;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-color);
+    }
+
+    .entry-subtitle {
+      font-size: 0.95rem;
+      font-style: normal;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .entry-summary {
+      font-size: 0.92rem;
+      line-height: 1.5;
+      margin-top: 0.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-muted);
+      text-align: justify;
+    }
+
+    .entry-list {
+      margin: 0.2rem 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .entry-list li {
+      position: relative;
+      padding-left: 1.2rem;
+      margin-bottom: 0.25rem;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      color: var(--text-color);
+      text-wrap: pretty;
+    }
+
+    .entry-list li::before {
+      content: "–";
+      position: absolute;
+      left: 0;
+      color: var(--text-muted);
+      font-weight: bold;
+    }
+
+    .entry-list li {
+      margin-bottom: 0.25rem;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      color: var(--text-color);
+      text-wrap: pretty;
+    }
+
+    /* Nested Multi-role Styling (for Qunar) */
+    .sub-entries-container {
+      margin-top: 0.5rem;
+      padding-left: 0.8rem;
+      border-left: 1px solid var(--rule-color);
+    }
+
+    .sub-entry {
+      margin-bottom: 0.8rem;
+    }
+
+    .sub-entry:last-child {
+      margin-bottom: 0;
+    }
+
+    .sub-entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.1rem;
+    }
+
+    .sub-entry-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .sub-entry-date {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Skills List */
+    .skills-list {
+      list-style-type: none;
+    }
+
+    .skills-list li {
+      margin-bottom: 0.4rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .skills-list li strong {
+      font-weight: 700;
+      color: var(--primary-color);
+      display: inline-block;
+      min-width: 80px;
+    }
+
+    /* Awards List */
+    .award-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.45rem;
+      font-size: 0.95rem;
+    }
+
+    .award-name {
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    .award-name strong {
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .award-date {
+      font-variant-numeric: tabular-nums;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      margin-left: 10px;
+    }
+
+    /* Evaluation List */
+    .evaluation-list {
+      list-style-type: none;
+    }
+
+    .evaluation-list li {
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      text-wrap: pretty;
+    }
+
+    .evaluation-list li strong {
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 850px) {
+      body {
+        padding: 0;
+        background-color: var(--paper-bg);
+      }
+      .resume-container {
+        box-shadow: none;
+        border-radius: 0;
+        padding: 30px 20px;
+      }
+      header.resume-header {
+        flex-direction: column-reverse;
+        align-items: center;
+        gap: 1.5rem;
+        text-align: center;
+      }
+      .header-text {
+        text-align: center;
+      }
+      .header-text h1 {
+        text-align: center;
+      }
+      .header-text .contact-info {
+        justify-content: center;
+      }
+      .header-photo {
+        margin-left: 0;
+      }
+      .contact-info {
+        flex-direction: column;
+        gap: 6px;
+      }
+      .contact-info span.divider {
+        display: none;
+      }
+      .entry-header, .sub-entry-header, .award-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
+      .entry-date, .sub-entry-date, .award-date {
+        margin-left: 0;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+    }
+
+
+  </style>
+</head>
+<body>
+
+
+
+  <!-- Main Resume Content -->
+  <main class="resume-container">
+    
+    <!-- Header -->
+    <header class="resume-header">
+      <div class="header-text">
+        <h1>张方雪</h1>
+        <div class="contact-info">
+          <!-- Email -->
+          <a href="mailto:jackiecpp@gmail.com">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            jackiecpp@gmail.com
+          </a>
+          
+          <span class="divider">|</span>
+          
+          <!-- Phone -->
+          <a href="tel:+8613521078475">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            (+86) 13521078475
+          </a>
+          
+          <span class="divider">|</span>
+
+          <!-- Website -->
+          <a href="https://jackiesteed.github.io" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            jackiesteed.github.io
+          </a>
+
+          <span class="divider">|</span>
+
+          <!-- GitHub -->
+          <a href="https://github.com/jackiesteed" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+            </svg>
+            github.com/jackiesteed
+          </a>
+        </div>
+      </div>
+      <div class="header-photo">
+        <img src="zfx.jpg" alt="张方雪 个人照片" class="profile-photo">
+      </div>
+    </header>
+
+    <!-- Work Experience -->
+    <section id="experience">
+      <h2>工作经历</h2>
+      
+      <!-- Li Auto -->
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title">理想汽车<img src="https://www.lixiang.com/favicon.ico" alt="理想汽车 Logo" class="inline-logo"></span>
+          <span class="entry-date">2022.01 - 至今</span>
+        </div>
+        <div class="entry-subtitle">技术Leader | 销售研发团队负责人</div>
+        <p class="entry-summary">负责销售研发团队的技术管理与架构规划，管辖营销获客、线索流转、零售转化、车辆交付及车主运营等全价值流核心业务系统。</p>
+        <ul class="entry-list">
+          <li><strong>团队管理：</strong>全面负责销售研发团队的技术管理与研发效能提升，基于 AI Coding 范式端到端提升研发效率。</li>
+          <li><strong>价值流管理：</strong>主导 M2L、L2D 两大核心价值流环节，负责营销、线索、零售转化、交付、车主运营等全业务流程管理。</li>
+          <li><strong>Agent建设：</strong>带领团队攻坚销售多维质检 Agent、销售知识图谱及 VoC Agent 建设，建立数据科学测评体系；主导建设基于向量搜索的销售全域搜索系统。</li>
+          <li><strong>高可用建设：</strong>主导销售核心链路系统的微服务治理与架构高可用改造，设计并落地弹性限流及降级预案，顺利承载新车发布、订车峰值等高并发业务场景，保障核心服务 SLA 达 99.99%。</li>
+        </ul>
+      </div>
+
+      <!-- Atour -->
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title">亚朵<img src="atour.png" alt="亚朵 Logo" class="inline-logo"></span>
+          <span class="entry-date">2018.01 - 2021.12</span>
+        </div>
+        <div class="entry-subtitle">技术总监 | 后端业务负责人、数据研发团队负责人</div>
+        <p class="entry-summary">全面负责后端研发与大数据算法团队，管辖亚朵 APP 微服务群、数据研发体系、酒店报价及交易中台等核心业务版块。</p>
+        <ul class="entry-list">
+          <li>设计并落地酒店报价中台服务，对报价、交易及用户体系等核心模块进行平台化重构。</li>
+          <li>管理大数据体系研发及算法业务，通过数据分析与模型优化赋能商业化决策。</li>
+          <li>搭建基于 Java 生态的中间件体系，显著提升研发与部署效率。</li>
+          <li>制定研发规范与代码标准，推动团队技术分享与梯队建设。</li>
+        </ul>
+      </div>
+
+      <!-- Qunar -->
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title">去哪儿网<img src="https://www.qunar.com/favicon.ico" alt="去哪儿网 Logo" class="inline-logo"></span>
+          <span class="entry-date">2014.04 - 2018.01</span>
+        </div>
+        <div class="entry-subtitle">技术TL</div>
+        <ul class="entry-list">
+          <li><strong>团队管理：</strong>负责酒店列表 Rank 团队及检索系统的开发管理与业务指标达成。</li>
+          <li><strong>架构设计：</strong>主导报价中心架构整合与重构，设计图状执行框架（Graph Execution Engine）以并行调度复杂业务逻辑；独立设计酒店检索转化率毫秒级实时监控系统。</li>
+          <li><strong>系统研发：</strong>主导酒店团购及电影票垂直检索系统设计开发，搭建基于内存的高性能垂搜架构；重构团品对接及统一接入系统，显著降低故障率。</li>
+          <li><strong>算法工程化：</strong>主导基于机器学习的酒店 Rank 排序系统工程化设计改造，实现高并发、低延迟场景下的精准排序响应。</li>
+        </ul>
+      </div>
+
+      <!-- Sogou -->
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title">搜狗<img src="https://www.sogou.com/images/logo/new/favicon.ico?v=4" alt="搜狗 Logo" class="inline-logo"></span>
+          <span class="entry-date">2012.01 - 2014.04</span>
+        </div>
+        <div class="entry-subtitle">开发工程师</div>
+        <ul class="entry-list">
+          <li>主导开发搜狗消息客户端，基于 DuiLib 渲染库和 Chrome 浏览器内核，实现内部 OA 系统的消息高效推送与网页化消息详情渲染。</li>
+          <li>深度 Review 搜狗浏览器内核代码，整理并汇总浏览器内核技术文档及内部知识 Wiki。</li>
+          <li>全栈开发搜狗 OA 系统，重点负责人员管理模块和周报提报模块的后端与前端逻辑。</li>
+          <li>利用 Python 开发自定义脚本解释器，通过编译原理中的词法分析与语法分析，将自定义脚本翻译为高性能 Python 脚本，并在翻译期间支持注入钩子（Hook）逻辑。</li>
+          <li>带头孵化并实现了基于云端日历的企业协作效率工具软件。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Education & Honors -->
+    <section id="education">
+      <h2>教育背景</h2>
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title">山东科技大学<img src="https://www.sdust.edu.cn/images/logo.png" alt="山东科技大学 Logo" class="inline-logo"></span>
+          <span class="entry-date">2008 - 2012</span>
+        </div>
+        <div class="entry-subtitle">学士学位 | 计算机科学与技术</div>
+        <ul class="entry-list">
+          <li>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
+              <span><strong>英语水平:</strong> 英语六级 (CET-6 560分)</span>
+              <span class="award-date">2009.06</span>
+            </div>
+          </li>
+          <li style="margin-top: 0.3rem;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
+              <span class="award-name"><strong>编程竞赛银牌</strong>，ACM/ICPC 国际大学生程序设计竞赛北京地区赛</span>
+              <span class="award-date">2011.10</span>
+            </div>
+          </li>
+          <li style="margin-top: 0.3rem;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
+              <span class="award-name"><strong>编程竞赛银牌</strong>，ACM/ICPC 国际大学生程序设计竞赛福州地区赛</span>
+              <span class="award-date">2011.08</span>
+            </div>
+          </li>
+          <li style="margin-top: 0.3rem;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
+              <span class="award-name"><strong>全国二等奖</strong>，全国大学生英语竞赛 (NECCS)</span>
+              <span class="award-date">2009.06</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Personal Evaluation -->
+    <section id="evaluation">
+      <h2>个人评价</h2>
+      <ul class="evaluation-list">
+        <li><strong>技术沉淀：</strong>十余年系统架构与工程实践积累，在垂直检索、多业务中台及微服务体系的规划与搭建方面具有丰富经验。</li>
+        <li><strong>团队管理：</strong>具备从0到1组建与管理后端研发团队的丰富经验。善于建立高效的项目流转机制与技术标准，推行基于 AI Coding 新范式的研发效能变革，实现端到端的敏捷价值交付；注重梯队建设与分享文化，持续提升团队的凝聚力与战斗力。</li>
+        <li><strong>拥抱AI时代：</strong>深度拥抱 AI 浪潮，具备扎实的 AI 工程落地与架构设计能力。主导销售业务 Agent 体系建设，将LLM、语义搜索、知识图谱等前沿技术成功工程化落地，并与黑客增长（Growth Hacking）深度融合，以技术创新驱动业务增长与效能飞跃。</li>
+      </ul>
+    </section>
+
+  </main>
+
+</body>
+</html>
