@@ -405,55 +405,6 @@
       color: var(--primary-color);
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 850px) {
-      body {
-        padding: 0;
-        background-color: var(--paper-bg);
-      }
-      .resume-container {
-        box-shadow: none;
-        border-radius: 0;
-        padding: 30px 20px;
-      }
-      header.resume-header {
-        flex-direction: column-reverse;
-        align-items: center;
-        gap: 1.5rem;
-        text-align: center;
-      }
-      .header-text {
-        text-align: center;
-      }
-      .header-text h1 {
-        text-align: center;
-      }
-      .header-text .contact-info {
-        justify-content: center;
-      }
-      .header-photo {
-        margin-left: 0;
-      }
-      .contact-info {
-        flex-direction: column;
-        gap: 6px;
-      }
-      .contact-info span.divider {
-        display: none;
-      }
-      .entry-header, .sub-entry-header, .award-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 2px;
-      }
-      .entry-date, .sub-entry-date, .award-date {
-        margin-left: 0;
-        font-size: 0.85rem;
-        color: var(--text-muted);
-      }
-    }
-
-
   </style>
 </head>
 <body>
@@ -498,16 +449,6 @@
             </svg>
             jackiesteed.github.io
           </a>
-
-          <span class="divider">|</span>
-
-          <!-- GitHub -->
-          <a href="https://github.com/jackiesteed" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-            </svg>
-            github.com/jackiesteed
-          </a>
         </div>
       </div>
       <div class="header-photo">
@@ -522,15 +463,15 @@
       <!-- Li Auto -->
       <div class="entry">
         <div class="entry-header">
-          <span class="entry-title">理想汽车<img src="https://www.lixiang.com/favicon.ico" alt="理想汽车 Logo" class="inline-logo"></span>
+          <span class="entry-title">理想汽车<img src="logos/lixiang.ico" alt="理想汽车 Logo" class="inline-logo"></span>
           <div class="entry-right">
             <span class="inline-subtitle">销售研发团队负责人</span>
             <span class="entry-date">2022.01 - 至今</span>
           </div>
         </div>
-        <p class="entry-summary">负责销售研发团队的技术管理与架构规划，统筹营销获客、线索流转、零售转化、车辆交付及车主运营等全价值流核心业务系统的建设。</p>
+        <p class="entry-summary">负责销售研发团队的技术管理与架构规划，管理 20 人团队，主导零售转化及 M2L、L2D 两大核心价值流，统筹营销获客、线索流转、零售转化、车辆交付及车主运营等全价值流核心业务系统的建设。</p>
         <ul class="entry-list">
-          <li><strong>团队管理：</strong>全面负责销售研发团队的技术管理与研发效能提升，基于 AI Coding 范式端到端提升研发效率。</li>
+          <li><strong>团队管理：</strong>全面负责销售研发团队的技术管理与研发效能提升，基于 AI Coding 范式端到端重构研发流程，人均研发效率提升约 50%。</li>
           <li><strong>价值流管理：</strong>主导 M2L、L2D 两大核心价值流环节，负责营销、线索、零售转化、交付、车主运营等全业务流程管理。</li>
           <li><strong>Agent建设：</strong>带领团队攻坚销售多维质检 Agent、销售知识图谱及 VoC Agent 建设，建立数据科学测评体系；主导建设基于向量搜索的销售全域搜索系统。</li>
           <li><strong>高可用建设：</strong>主导销售核心链路系统的微服务治理与架构高可用改造，设计并落地弹性限流及降级预案，顺利承载新车发布、订车峰值等高并发业务场景，保障核心服务 SLA 达 99.99%。</li>
@@ -546,11 +487,11 @@
             <span class="entry-date">2018.01 - 2021.12</span>
           </div>
         </div>
-        <p class="entry-summary">全面负责后端研发与大数据算法团队，统筹亚朵 APP 微服务群、数据研发体系、酒店报价等核心业务版块。从 0 到 1 搭建了亚朵的研发体系，并完成了 C 端、B 端及中台业务系统的建设。</p>
+        <p class="entry-summary">全面负责后端研发与大数据算法团队，管理 30 人（下辖会员研发、中台研发、数据 3 个团队），直接汇报 CTO；统筹亚朵 APP 微服务群、数据研发体系、酒店报价等核心业务版块，支撑集团 5000 万+ 会员体系（2020 年）。从 0 到 1 搭建了亚朵的研发体系，并完成了 C 端、B 端及中台业务系统的建设。</p>
         <ul class="entry-list">
           <li>设计并落地酒店报价中台服务，对报价、交易及用户体系等核心模块进行平台化重构。</li>
           <li>管理大数据体系研发及算法业务，通过数据分析与模型优化赋能商业化决策。</li>
-          <li>搭建基于 Java 生态的中间件体系，显著提升研发与部署效率。</li>
+          <li>搭建基于 Java 生态的中间件体系，统一研发与部署流程，提升交付效率。</li>
           <li>制定研发规范与代码标准，推动团队技术分享与梯队建设。</li>
         </ul>
       </div>
@@ -558,7 +499,7 @@
       <!-- Qunar -->
       <div class="entry">
         <div class="entry-header">
-          <span class="entry-title">去哪儿网<img src="https://www.qunar.com/favicon.ico" alt="去哪儿网 Logo" class="inline-logo"></span>
+          <span class="entry-title">去哪儿网<img src="logos/qunar.ico" alt="去哪儿网 Logo" class="inline-logo"></span>
           <div class="entry-right">
             <span class="inline-subtitle">技术Leader</span>
             <span class="entry-date">2014.04 - 2018.01</span>
@@ -567,7 +508,7 @@
         <ul class="entry-list">
           <li><strong>团队管理：</strong>负责酒店列表 Rank 团队及检索系统的开发管理与业务指标达成。</li>
           <li><strong>架构设计：</strong>主导报价中心架构整合与重构，设计图状执行框架（Graph Execution Engine）以并行调度复杂业务逻辑；独立设计酒店检索转化率毫秒级实时监控系统。</li>
-          <li><strong>系统研发：</strong>主导酒店团购及电影票垂直检索系统设计开发，搭建基于内存的高性能垂搜架构；重构团品对接及统一接入系统，显著降低故障率。</li>
+          <li><strong>系统研发：</strong>主导酒店团购及电影票垂直检索系统设计开发，搭建基于内存的高性能垂搜架构；重构团品对接及统一接入系统，收敛接入方式，降低线上故障率。</li>
           <li><strong>算法工程化：</strong>主导基于机器学习的酒店 Rank 排序系统工程化设计改造，实现高并发、低延迟场景下的精准排序响应。</li>
         </ul>
       </div>
@@ -575,7 +516,7 @@
       <!-- Sogou -->
       <div class="entry">
         <div class="entry-header">
-          <span class="entry-title">搜狗<img src="https://www.sogou.com/images/logo/new/favicon.ico?v=4" alt="搜狗 Logo" class="inline-logo"></span>
+          <span class="entry-title">搜狗<img src="logos/sogou.ico" alt="搜狗 Logo" class="inline-logo"></span>
           <div class="entry-right">
             <span class="inline-subtitle">研发工程师</span>
             <span class="entry-date">2012.01 - 2014.04</span>
@@ -596,38 +537,43 @@
       <h2>教育背景</h2>
       <div class="entry">
         <div class="entry-header">
-          <span class="entry-title">山东科技大学<img src="https://www.sdust.edu.cn/images/logo.png" alt="山东科技大学 Logo" class="inline-logo invert-in-light"></span>
+          <span class="entry-title">山东科技大学<img src="logos/sdust.png" alt="山东科技大学 Logo" class="inline-logo invert-in-light"></span>
           <div class="entry-right">
             <span class="inline-subtitle">计算机科学与技术</span>
             <span class="entry-date">2008 - 2012</span>
           </div>
         </div>
-        <ul class="entry-list">
-          <li>
-            <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
-              <span class="award-name"><strong>英语六级</strong> (CET-6 560分)</span>
-              <span class="award-date">2009.06</span>
-            </div>
-          </li>
-          <li style="margin-top: 0.3rem;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
-              <span class="award-name"><strong>全国二等奖</strong>，全国大学生英语竞赛 (NECCS)</span>
-              <span class="award-date">2009.06</span>
-            </div>
-          </li>
-          <li style="margin-top: 0.3rem;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
-              <span class="award-name"><strong>编程竞赛银牌</strong>，ACM/ICPC 国际大学生程序设计竞赛福州地区赛</span>
-              <span class="award-date">2011.08</span>
-            </div>
-          </li>
-          <li style="margin-top: 0.3rem;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
-              <span class="award-name"><strong>编程竞赛银牌</strong>，ACM/ICPC 国际大学生程序设计竞赛北京地区赛</span>
-              <span class="award-date">2011.10</span>
-            </div>
-          </li>
-        </ul>
+        <div style="display: flex; gap: 2.5rem; margin-top: 0.2rem;">
+          <!-- 竞赛（左） -->
+          <div style="flex: 1;">
+            <ul class="entry-list">
+              <li>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
+                  <span class="award-name"><strong>ACM/ICPC 区域赛银牌 ×2</strong></span>
+                  <span class="award-date">2011</span>
+                </div>
+                <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.1rem;">北京赛区、福州赛区</div>
+              </li>
+            </ul>
+          </div>
+          <!-- 英语（右） -->
+          <div style="flex: 1;">
+            <ul class="entry-list">
+              <li>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
+                  <span class="award-name">CET-6 560分</span>
+                  <span class="award-date">2009.06</span>
+                </div>
+              </li>
+              <li style="margin-top: 0.3rem;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
+                  <span class="award-name">全国大学生英语竞赛二等奖 (NECCS)</span>
+                  <span class="award-date">2009.06</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -635,9 +581,9 @@
     <section id="evaluation">
       <h2>个人评价</h2>
       <ul class="evaluation-list">
-        <li><strong>技术沉淀：</strong>十余年系统架构与工程实践积累，在Agent建设、垂直检索、多业务中台及微服务体系的规划与搭建方面具有丰富经验。</li>
-        <li><strong>团队管理：</strong>具备从0到1组建与管理后端研发团队的丰富经验。推行基于 AI Coding 新范式的研发效能变革，实现端到端的敏捷价值交付；注重梯队建设与分享文化，持续提升团队的凝聚力与战斗力。</li>
-        <li><strong>AI架构能力：</strong>具备深厚的 AI 应用实战经验，精通 LLM 工程化落地、向量检索及知识图谱技术。成功主导多个高复杂度业务 Agent 系统的架构规划与评测体系搭建，凭借敏锐的技术嗅觉，持续以 AI 创新赋能业务爆发与研发提效。</li>
+        <li><strong>技术沉淀：</strong>十余年系统架构与工程实践，覆盖 Agent 建设、垂直检索、多业务中台与微服务体系的规划与落地。</li>
+        <li><strong>团队管理：</strong>从 0 到 1 组建并管理后端研发团队，落地基于 AI Coding 的研发效能体系，实现端到端敏捷交付；重视梯队建设与技术分享文化。</li>
+        <li><strong>AI架构能力：</strong>主导多个高复杂度业务 Agent 系统的架构设计与评测体系建设，具备 LLM 工程化、向量检索与知识图谱的落地经验。</li>
       </ul>
     </section>
 
