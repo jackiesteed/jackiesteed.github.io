@@ -9,6 +9,7 @@
   <meta name="description" content="张方雪 (Jackie) 的个人简历。技术Leader，前去哪儿架构师、亚朵技术总监，拥有丰富的销售研发团队管理、中台架构设计及搜索检索开发经验。">
   <meta name="keywords" content="张方雪, Jackie, 简历, 技术Leader, 架构师, 亚朵, 理想汽车, 去哪儿">
   <meta name="author" content="张方雪">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
   <!-- Google Fonts for Academic Serif Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -107,14 +108,18 @@
     }
 
     .contact-info {
-      display: flex;
-      justify-content: flex-start;
+      display: grid;
+      grid-template-columns: max-content 1px max-content;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 12px 18px;
+      justify-content: flex-start;
+      gap: 6px 18px;
       font-family: var(--font-serif);
       font-size: 0.95rem;
       color: var(--text-muted);
+    }
+
+    .contact-row {
+      display: contents;
     }
 
     .header-photo {
@@ -140,14 +145,24 @@
       gap: 4px;
     }
 
+    .wechat-contact {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
     .contact-info a:hover {
       color: var(--link-color);
       text-decoration: underline;
     }
 
-    .contact-info span.divider {
-      user-select: none;
-      color: var(--rule-color);
+    .contact-info .divider {
+      display: block;
+      width: 1px;
+      height: 14px;
+      align-self: center;
+      background-color: var(--rule-color);
       opacity: 0.3;
     }
 
@@ -270,6 +285,14 @@
       left: 0;
       color: var(--text-muted);
       font-weight: bold;
+    }
+
+    .entry-list li.agent-breakdown-item {
+      padding-left: 1.2rem;
+    }
+
+    .entry-list li.agent-breakdown-item::before {
+      content: none;
     }
 
     .entry-list li {
@@ -420,11 +443,22 @@
 
       .contact-info {
         grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
         gap: 6px 14px;
         font-size: 0.9rem;
       }
 
-      .contact-info span.divider {
+      .contact-row {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px 14px;
+      }
+
+      .contact-info .divider {
         display: none;
       }
 
@@ -475,36 +509,53 @@
       <div class="header-text">
         <h1>张方雪</h1>
         <div class="contact-info">
-          <!-- Email -->
-          <a href="mailto:jackiecpp@gmail.com">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-              <polyline points="22,6 12,13 2,6"></polyline>
-            </svg>
-            jackiecpp@gmail.com
-          </a>
-          
-          <span class="divider">|</span>
-          
-          <!-- Phone -->
-          <a href="tel:+8613521078475">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-            </svg>
-            (+86) 13521078475
-          </a>
-          
-          <span class="divider">|</span>
+          <div class="contact-row">
+            <!-- Email -->
+            <a href="mailto:jackiecpp@gmail.com">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              jackiecpp@gmail.com
+            </a>
 
-          <!-- Website -->
-          <a href="https://jackiesteed.github.io" target="_blank" rel="noopener noreferrer">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="2" y1="12" x2="22" y2="12"></line>
-              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-            </svg>
-            jackiesteed.github.io
-          </a>
+            <span class="divider" aria-hidden="true"></span>
+
+            <!-- Phone -->
+            <a href="tel:+8613521078475">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              (+86) 13521078475
+            </a>
+          </div>
+
+          <div class="contact-row">
+            <!-- Website -->
+            <a href="https://jackiesteed.github.io" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              jackiesteed.github.io
+            </a>
+
+            <span class="divider" aria-hidden="true"></span>
+
+            <!-- WeChat -->
+            <span class="wechat-contact">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.3 3.5C5.2 3.5 1.8 6.2 1.8 9.5c0 1.8 1.1 3.5 2.9 4.6l-.8 2.4 2.7-1.3c.9.2 1.8.3 2.7.3 4.1 0 7.5-2.7 7.5-6S13.4 3.5 9.3 3.5Z"></path>
+                <path d="M22.2 14.2c0-2.8-2.7-5.1-6-5.1s-6 2.3-6 5.1 2.7 5.1 6 5.1c.8 0 1.6-.1 2.3-.4l2.2 1.1-.6-1.9c1.3-1 2.1-2.3 2.1-3.9Z"></path>
+                <circle cx="7.1" cy="8.7" r=".85" fill="currentColor" stroke="none"></circle>
+                <circle cx="11.5" cy="8.7" r=".85" fill="currentColor" stroke="none"></circle>
+                <circle cx="14.5" cy="13.7" r=".75" fill="currentColor" stroke="none"></circle>
+                <circle cx="18.2" cy="13.7" r=".75" fill="currentColor" stroke="none"></circle>
+              </svg>
+              jackiesteed
+            </span>
+          </div>
         </div>
       </div>
       <div class="header-photo">
@@ -525,11 +576,14 @@
             <span class="entry-date">2022.01 - 至今</span>
           </div>
         </div>
-        <p class="entry-summary">负责销售研发团队的技术管理与架构规划，管理 20 人团队，主导零售转化及 M2L、L2D 两大核心价值流，统筹营销获客、线索流转、零售转化、车辆交付及车主运营等全价值流核心业务系统的建设。</p>
+        <p class="entry-summary">负责销售研发团队的技术管理与架构规划，管理 20 人团队，统筹销售全价值流核心业务系统的建设。</p>
         <ul class="entry-list">
-          <li><strong>团队管理：</strong>全面负责销售研发团队的技术管理与研发效能提升，基于 AI Coding 范式端到端重构研发流程，人均研发效率提升约 50%。</li>
-          <li><strong>价值流管理：</strong>主导 M2L、L2D 两大核心价值流环节，负责营销、线索、零售转化、交付、车主运营等全业务流程管理。</li>
-          <li><strong>Agent建设：</strong>带领团队攻坚销售多维质检 Agent、销售知识图谱及 VoC Agent 建设，建立数据科学测评体系；面向业务与研发团队建设销售工单 Agent，实现销售问题全自动排查；主导建设基于向量搜索的销售全域搜索系统。</li>
+          <li><strong>团队管理：</strong>全面负责销售研发团队的技术管理与研发效能提升，主导 M2L、L2D 两大核心价值流环节，负责营销、线索、零售转化、交付、车主运营等全业务流程管理。</li>
+          <li><strong>销售领域 Agent 建设：</strong></li>
+          <li class="agent-breakdown-item"><strong>1. Sales Agent：</strong>带领团队建设销售多维质检 Agent、销售知识图谱及 Sales Agent；面向销售专家，在跟进、试驾、承担、企微互动等关键场景提供赋能。</li>
+          <li class="agent-breakdown-item"><strong>2. 销售问答 Agent：</strong>覆盖全理想汽车，10秒内快速准确应答，服务 10,000+ 专家。</li>
+          <li class="agent-breakdown-item"><strong>3. VoC Agent：</strong>实现客户声音趋势日度分析，支撑集团战略决策；建立数据科学测评体系，保障 Agent 体系交付质量。</li>
+          <li><strong>研发效能 Agent 建设：</strong>面向业务与研发团队建设销售工单 Agent，实现销售问题全自动排查，支持研发快速排查线上及测试环境问题，全自动跟进销售工单，提升业务支持效率；体系化建设 AI Coding 门禁机制，提升研发效率。</li>
           <li><strong>高可用建设：</strong>主导销售核心链路系统的微服务治理与架构高可用改造，设计并落地弹性限流及降级预案，顺利承载新车发布、订车峰值等高并发业务场景，保障核心服务 SLA 达 99.99%。</li>
         </ul>
       </div>
