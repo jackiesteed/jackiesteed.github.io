@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>张方雪 (Jackie) - 个人简历 | Technical Leader & Architect</title>
+  <title>张方雪简历</title>
   
   <!-- SEO Meta Tags -->
   <meta name="description" content="张方雪 (Jackie) 的个人简历。技术Leader，前去哪儿架构师、亚朵技术总监，拥有丰富的销售研发团队管理、中台架构设计及搜索检索开发经验。">
@@ -40,6 +40,7 @@
       --rule-color: #111111;
       --link-color: #0f4c81;
       --link-hover: #002c53;
+      --company-color: #005550;
       --accent-bg: #f8f9fa;
       --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 
@@ -213,6 +214,10 @@
       gap: 6px;
     }
 
+    #experience .entry-title {
+      color: var(--company-color);
+    }
+
     .inline-logo {
       height: 16px;
       width: auto;
@@ -223,7 +228,7 @@
 
     /* Add contrast behind the white school logo. */
     .school-logo {
-      background-color: #94a3b8;
+      background-color: var(--company-color);
       padding: 2px 4px;
       border-radius: 3px;
     }
@@ -259,7 +264,7 @@
       line-height: 1.5;
       margin-top: 0.1rem;
       margin-bottom: 0.5rem;
-      color: var(--text-muted);
+      color: var(--text-color);
       text-align: justify;
     }
 
@@ -283,7 +288,7 @@
       content: "–";
       position: absolute;
       left: 0;
-      color: var(--text-muted);
+      color: var(--text-color);
       font-weight: bold;
     }
 
@@ -376,7 +381,7 @@
 
     .award-date {
       font-variant-numeric: tabular-nums;
-      color: var(--text-muted);
+      color: var(--text-color);
       font-size: 0.9rem;
       white-space: nowrap;
       margin-left: 10px;
@@ -486,7 +491,7 @@
       }
 
       .entry-date {
-        color: var(--text-muted);
+        color: var(--text-color);
         white-space: nowrap;
       }
 
@@ -576,15 +581,15 @@
             <span class="entry-date">2022.01 - 至今</span>
           </div>
         </div>
-        <p class="entry-summary">负责销售研发团队的技术管理与架构规划，管理 20 人团队，统筹销售全价值流核心业务系统的建设。</p>
+        <p class="entry-summary">负责销售研发团队的技术规划与架构管理，管理 20 人团队，带领团队建设多个高价值 Agent。</p>
         <ul class="entry-list">
-          <li><strong>团队管理：</strong>全面负责销售研发团队的技术管理与研发效能提升，主导 M2L、L2D 两大核心价值流环节，负责营销、线索、零售转化、交付、车主运营等全业务流程管理。</li>
+          <li><strong>团队管理：</strong>统筹 M2L、L2D 两大价值流，覆盖营销、线索、零售转化、交付和车主运营；搭建兼具工程、数据与 AI Agent 能力的复合型团队。</li>
           <li><strong>销售领域 Agent 建设：</strong></li>
-          <li class="agent-breakdown-item"><strong>1. Sales Agent：</strong>带领团队建设销售多维质检 Agent、销售知识图谱及 Sales Agent；面向销售专家，在跟进、试驾、承担、企微互动等关键场景提供赋能。</li>
-          <li class="agent-breakdown-item"><strong>2. 销售问答 Agent：</strong>覆盖全理想汽车，10秒内快速准确应答，服务 10,000+ 专家。</li>
-          <li class="agent-breakdown-item"><strong>3. VoC Agent：</strong>实现客户声音趋势日度分析，支撑集团战略决策。</li>
-          <li><strong>质量保障：</strong>建立数据科学测评体系，保障 Agent 体系交付质量。</li>
-          <li><strong>研发效能 Agent 建设：</strong>面向业务与研发团队建设销售工单 Agent，实现销售问题全自动排查，支持研发快速排查线上及测试环境问题，全自动跟进销售工单，提升业务支持效率；体系化建设 AI Coding 门禁机制，提升研发效率。</li>
+          <li class="agent-breakdown-item"><strong>1. Sales Agent：</strong>面向销售专家建设销售助手 Agent，并整合销售多维质检与销售知识图谱，形成覆盖线索跟进、试驾、订单承接和企微互动等关键场景的产品矩阵。</li>
+          <li class="agent-breakdown-item"><strong>2. 销售问答 Agent：</strong>面向全公司 10,000+ 销售专家提供问答服务，10秒内快速准确应答。</li>
+          <li class="agent-breakdown-item"><strong>3. VoC Agent：</strong>按日分析客户声音趋势，支撑集团战略决策。</li>
+          <li><strong>质量保障：</strong>建立数据科学测评体系，确保 Agent 体系持续高质量交付。</li>
+          <li><strong>研发效能 Agent 建设：</strong>建设销售工单 Agent，实现销售问题自动排查，覆盖线上和测试环境，并自动跟进工单闭环；同时建设 AI Coding 门禁机制，将质量校验前置到研发流程，提升研发效率。</li>
           <li><strong>高可用建设：</strong>主导销售核心链路系统的微服务治理与架构高可用改造，设计并落地弹性限流及降级预案，顺利承载新车发布、订车峰值等高并发业务场景，保障核心服务 SLA 达 99.99%。</li>
         </ul>
       </div>
@@ -638,7 +643,7 @@
           <li>深度 Review 搜狗浏览器内核代码，整理并汇总浏览器内核技术文档及内部知识 Wiki。</li>
           <li>全栈开发搜狗 OA 系统，重点负责人员管理模块和周报提报模块的后端与前端逻辑。</li>
           <li>利用 Python 开发自定义脚本解释器，通过编译原理中的词法分析与语法分析，将自定义脚本翻译为高性能 Python 脚本，并在翻译期间支持注入钩子（Hook）逻辑。</li>
-          <li>带头孵化并实现了基于云端日历的企业协作效率工具软件。</li>
+          <li>牵头孵化云端日历企业协作工具。</li>
         </ul>
       </div>
     </section>
@@ -657,10 +662,10 @@
         <ul class="entry-list" style="margin-top: 0.2rem;">
           <li>
             <div style="display: flex; justify-content: space-between; align-items: baseline; width: 100%;">
-              <span class="award-name"><strong>ACM/ICPC 区域赛银牌 ×2</strong></span>
+              <span class="award-name"><strong>ACM/ICPC 亚洲区域赛银牌</strong></span>
               <span class="award-date">2011</span>
             </div>
-            <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 0.1rem;">北京赛区、福州赛区</div>
+            <div style="font-size: 0.9rem; color: var(--text-color); margin-top: 0.1rem;">北京赛区、福州赛区</div>
           </li>
         </ul>
       </div>
