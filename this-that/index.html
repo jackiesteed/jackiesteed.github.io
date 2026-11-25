@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>this / that / these / those · 三年级英语</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7fbfa;
+    --card: #ffffff;
+    --ink: #1f2a2a;
+    --muted: #6b7878;
+    --line: #d8e8e5;
+    --shadow-md: 0 8px 22px rgba(46, 114, 114, .10);
+    --shadow-lg: 0 18px 44px -20px rgba(46, 114, 114, .30);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 16px 60px;
+    font-family: "Quicksand", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  .sheet { max-width: 880px; margin: 0 auto; }
+  a.back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Fredoka", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #2e7272;
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  a.back:hover { text-decoration: underline; }
+
+  .poster-head { text-align: center; margin-bottom: 26px; }
+  .badge {
+    display: inline-block;
+    font-family: "Fredoka", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: .02em;
+    color: #2e7272;
+    background: #edf6f4;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 16px;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: clamp(26px, 5vw, 40px);
+    margin: 0 0 8px;
+    color: #1f2a2a;
+  }
+  .subtitle { font-weight: 600; color: var(--muted); font-size: 16px; margin: 0; }
+
+  .note {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: #eaf1fc;
+    border: 2px dashed #9fbceb;
+    border-radius: 18px;
+    padding: 14px 18px;
+    margin: 24px 0;
+  }
+  .note .note-emoji { font-size: 22px; flex-shrink: 0; }
+  .note p { margin: 0; font-weight: 600; font-size: 13.5px; line-height: 1.7; color: #2f4d7a; }
+  .note b { color: #2456a8; }
+
+  .diagram-wrap {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    box-shadow: var(--shadow-md);
+    padding: 18px 16px 8px;
+    margin-bottom: 24px;
+  }
+  .diagram-title {
+    text-align: center;
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ink);
+    margin: 0 0 4px;
+  }
+  .rel-diagram { width: 100%; height: auto; display: block; }
+  .rel-diagram .zone-label {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    fill: #9caeac;
+  }
+  .rel-diagram .arrow-label {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    fill: currentColor;
+  }
+  .rel-diagram .node-en {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .rel-diagram .node-zh {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    fill: var(--muted);
+    text-anchor: middle;
+  }
+  .rel-diagram .the-badge {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    fill: #a97c1f;
+  }
+  .rel-diagram .the-caption {
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    fill: #b58a3a;
+  }
+
+  /* ===== table ===== */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 22px;
+    box-shadow: var(--shadow-lg);
+    background: var(--card);
+    border: 1px solid var(--line);
+  }
+  table.dem {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    min-width: 640px;
+  }
+  table.dem th, table.dem td {
+    padding: 14px 10px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  table.dem thead th {
+    font-family: "Fredoka", sans-serif;
+    background: #f2f8f7;
+    color: #1f2a2a;
+    border-bottom: 2px solid var(--line);
+  }
+  table.dem thead .grp-row th {
+    font-size: 16px;
+    font-weight: 700;
+    padding-top: 16px;
+    padding-bottom: 10px;
+  }
+  table.dem thead th.corner { background: #eaf3f1; }
+  table.dem thead th.arrow-head { background: #eaf3f1; font-size: 16px; }
+  table.dem tbody td { border-bottom: 1px solid var(--line); }
+  table.dem tbody tr:last-child td { border-bottom: none; }
+  table.dem tbody tr:hover td { background: rgba(46, 114, 114, .04); }
+
+  td.person-cat {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  td.person-cat small { display: block; font-weight: 600; font-size: 11px; color: #9caeac; margin-top: 2px; }
+
+  td.word-cell { background: var(--tint, #fff); border-left: 6px solid var(--accent, #2e7272); }
+  .dicon { width: 92px; height: 60px; margin: 0 auto 4px; color: var(--accent, #2e7272); display: block; }
+  .w-en {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--accent, #2e7272);
+    line-height: 1.1;
+  }
+  .w-zh { font-size: 13px; font-weight: 700; color: var(--ink); margin-top: 2px; }
+  .w-ex { font-size: 11.5px; font-weight: 600; color: var(--muted); margin-top: 4px; line-height: 1.5; }
+
+  .arrow-cell { color: #b9c9c6; font-size: 20px; font-weight: 700; }
+
+  .tip {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: #fff7e8;
+    border: 2px dashed #e0b256;
+    border-radius: 18px;
+    padding: 16px 18px;
+    margin-top: 22px;
+  }
+  .tip .tip-emoji { font-size: 26px; flex-shrink: 0; }
+  .tip p { margin: 0; font-weight: 600; font-size: 14px; line-height: 1.6; color: #5a4a20; }
+  .tip b { color: #a97c1f; }
+
+  footer { text-align: center; color: var(--muted); font-size: 12.5px; font-weight: 600; margin-top: 40px; }
+
+  @media print {
+    body { padding: 10px; background: #fff; }
+    a.back { display: none; }
+    .table-wrap { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <a class="back" href="/verbs/">&larr; 回到动作小人</a>
+
+  <header class="poster-head">
+    <span class="badge">✨ 三年级英语指示代词认知卡 ✨</span>
+    <h1>this · that · these · those</h1>
+    <p class="subtitle">离你近还是远？是一个还是一群？两个问题就能选对词</p>
+  </header>
+
+  <div class="note">
+    <span class="note-emoji">📍</span>
+    <p><b>两个判断标准：</b>① 东西离你<b>近</b>还是<b>远</b>？② 是<b>一个</b>还是<b>一群（两个以上）</b>？this / these 指近处的，that / those 指远处的；this / that 指一个，它们各自的复数 these / those 指很多个。</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <p class="diagram-title">四个词是怎么互相"变"出来的</p>
+    <svg viewBox="0 -60 760 465" class="rel-diagram" role="img" aria-label="this that these those the 关系图">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+
+      <rect x="15" y="-47" width="730" height="447" rx="26" fill="none" stroke="#e0b256" stroke-width="2.5" stroke-dasharray="3 7"/>
+      <rect x="333" y="-60" width="94" height="27" rx="13.5" fill="#fdf1e2" stroke="#e0b256" stroke-width="2"/>
+      <text x="380" y="-41" text-anchor="middle" class="the-badge">the</text>
+      <text x="380" y="-16" text-anchor="middle" class="the-caption">知道具体是哪(些)个 → 四个都能换成它</text>
+
+      <ellipse cx="380" cy="303" rx="150" ry="92" fill="none" stroke="#b9c9c6" stroke-width="2.5" stroke-dasharray="5 6"/>
+      <text x="380" y="368" text-anchor="middle" class="zone-label near-label">近处 near</text>
+      <text x="380" y="20" text-anchor="middle" class="zone-label far-label">远处 far</text>
+
+      <g stroke="#c3cfcd" stroke-width="2" fill="none">
+        <line x1="380" y1="303" x2="255" y2="238"/>
+        <line x1="380" y1="303" x2="505" y2="238"/>
+        <line x1="380" y1="303" x2="140" y2="95" stroke-dasharray="4 5"/>
+        <line x1="380" y1="303" x2="620" y2="95" stroke-dasharray="4 5"/>
+      </g>
+
+      <g fill="none" stroke="#7a8a88" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="380" cy="278" r="9"/>
+        <line x1="380" y1="287" x2="380" y2="315"/>
+        <line x1="380" y1="315" x2="368" y2="338"/>
+        <line x1="380" y1="315" x2="392" y2="338"/>
+        <line x1="380" y1="294" x2="365" y2="282"/>
+        <line x1="380" y1="294" x2="395" y2="282"/>
+      </g>
+
+      <g color="#2f9e6e" stroke="currentColor" fill="currentColor">
+        <path d="M270,215 H490" fill="none" stroke="currentColor" stroke-width="3" marker-start="url(#ah)" marker-end="url(#ah)"/>
+        <rect x="368" y="200" width="60" height="18" rx="9" fill="#e8f7f0"/>
+        <text x="398" y="213" text-anchor="middle" class="arrow-label">变多</text>
+      </g>
+      <g color="#3f5fd9" stroke="currentColor" fill="currentColor">
+        <path d="M195,60 H565" fill="none" stroke="currentColor" stroke-width="3" marker-start="url(#ah)" marker-end="url(#ah)"/>
+        <rect x="368" y="45" width="60" height="18" rx="9" fill="#eaefff"/>
+        <text x="398" y="58" text-anchor="middle" class="arrow-label">变多</text>
+      </g>
+      <g color="#7a52c9" stroke="currentColor" fill="currentColor">
+        <path d="M225,205 L155,110" fill="none" stroke="currentColor" stroke-width="3" marker-end="url(#ah)"/>
+        <rect x="118" y="145" width="60" height="18" rx="9" fill="#f1eafb"/>
+        <text x="148" y="158" text-anchor="middle" class="arrow-label">变远</text>
+      </g>
+      <g color="#7a52c9" stroke="currentColor" fill="currentColor">
+        <path d="M535,205 L605,110" fill="none" stroke="currentColor" stroke-width="3" marker-end="url(#ah)"/>
+        <rect x="582" y="145" width="60" height="18" rx="9" fill="#f1eafb"/>
+        <text x="612" y="158" text-anchor="middle" class="arrow-label">变远</text>
+      </g>
+
+      <g transform="translate(200,205)">
+        <rect x="-11" y="-11" width="22" height="22" rx="3" fill="none" stroke="#2f9e6e" stroke-width="3"/>
+        <text x="0" y="42" text-anchor="middle" class="node-en" fill="#2f9e6e">this</text>
+        <text x="0" y="58" text-anchor="middle" class="node-zh">这（个）</text>
+      </g>
+      <g transform="translate(560,205)">
+        <rect x="-16" y="-14" width="14" height="14" rx="2" fill="none" stroke="#2f9e6e" stroke-width="2.5"/>
+        <rect x="-2" y="-6" width="14" height="14" rx="2" fill="none" stroke="#2f9e6e" stroke-width="2.5"/>
+        <rect x="-9" y="2" width="14" height="14" rx="2" fill="none" stroke="#2f9e6e" stroke-width="2.5"/>
+        <text x="0" y="42" text-anchor="middle" class="node-en" fill="#2f9e6e">these</text>
+        <text x="0" y="58" text-anchor="middle" class="node-zh">这些</text>
+      </g>
+      <g transform="translate(130,90)">
+        <rect x="-9" y="-9" width="18" height="18" rx="3" fill="none" stroke="#3f5fd9" stroke-width="3"/>
+        <text x="0" y="36" text-anchor="middle" class="node-en" fill="#3f5fd9">that</text>
+        <text x="0" y="52" text-anchor="middle" class="node-zh">那（个）</text>
+      </g>
+      <g transform="translate(630,90)">
+        <rect x="-14" y="-12" width="12" height="12" rx="2" fill="none" stroke="#3f5fd9" stroke-width="2.5"/>
+        <rect x="-2" y="-5" width="12" height="12" rx="2" fill="none" stroke="#3f5fd9" stroke-width="2.5"/>
+        <rect x="-8" y="2" width="12" height="12" rx="2" fill="none" stroke="#3f5fd9" stroke-width="2.5"/>
+        <text x="0" y="36" text-anchor="middle" class="node-en" fill="#3f5fd9">those</text>
+        <text x="0" y="52" text-anchor="middle" class="node-zh">那些</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="note" style="background:#fdf1e2; border-color:#e6c07a;">
+    <span class="note-emoji">⭐</span>
+    <p><b>再多学一个：the</b> —— 当大家都已经知道你说的是<b>哪(些)个</b>东西时，不用再纠结远近或单复数，直接用 the 就行，近的远的、一个多个都能用。<br>
+    比如：<i>The book on the desk is mine.</i>（桌上<b>那本</b>书是我的——因为只有一本，大家都知道是哪本）</p>
+  </div>
+
+  <div class="table-wrap">
+    <table class="dem">
+      <thead>
+        <tr class="grp-row">
+          <th class="corner">位置</th>
+          <th>单数（一个）</th>
+          <th class="arrow-head">变多 →</th>
+          <th>复数（一群）</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="person-cat">近处<br><small>就在手边</small></td>
+          <td class="word-cell" style="--accent:#2f9e6e; --tint:#e8f7f0;">
+            <svg class="dicon" viewBox="0 0 100 64">
+              <g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="16" cy="18" r="6"/>
+                <line x1="16" y1="24" x2="16" y2="44"/>
+                <line x1="16" y1="44" x2="11" y2="58"/>
+                <line x1="16" y1="44" x2="21" y2="58"/>
+                <line x1="16" y1="30" x2="9" y2="40"/>
+                <line x1="16" y1="30" x2="34" y2="26"/>
+              </g>
+              <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round">
+                <rect x="38" y="20" width="12" height="12" rx="2"/>
+              </g>
+            </svg>
+            <div class="w-en">this</div>
+            <div class="w-zh">这（个）</div>
+            <div class="w-ex">This is my book.<br>这是我的书。</div>
+          </td>
+          <td class="arrow-cell">→</td>
+          <td class="word-cell" style="--accent:#2f9e6e; --tint:#e8f7f0;">
+            <svg class="dicon" viewBox="0 0 100 64">
+              <g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="16" cy="18" r="6"/>
+                <line x1="16" y1="24" x2="16" y2="44"/>
+                <line x1="16" y1="44" x2="11" y2="58"/>
+                <line x1="16" y1="44" x2="21" y2="58"/>
+                <line x1="16" y1="30" x2="9" y2="40"/>
+                <line x1="16" y1="30" x2="34" y2="26"/>
+              </g>
+              <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round">
+                <rect x="36" y="16" width="10" height="10" rx="2"/>
+                <rect x="46" y="22" width="10" height="10" rx="2"/>
+                <rect x="40" y="28" width="10" height="10" rx="2"/>
+              </g>
+            </svg>
+            <div class="w-en">these</div>
+            <div class="w-zh">这些</div>
+            <div class="w-ex">These are my books.<br>这些是我的书。</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="person-cat">远处<br><small>要伸手指</small></td>
+          <td class="word-cell" style="--accent:#3f5fd9; --tint:#eaefff;">
+            <svg class="dicon" viewBox="0 0 100 64">
+              <g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="16" cy="18" r="6"/>
+                <line x1="16" y1="24" x2="16" y2="44"/>
+                <line x1="16" y1="44" x2="11" y2="58"/>
+                <line x1="16" y1="44" x2="21" y2="58"/>
+                <line x1="16" y1="30" x2="9" y2="40"/>
+                <line x1="16" y1="30" x2="32" y2="25"/>
+              </g>
+              <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round">
+                <line x1="34" y1="24" x2="72" y2="12" stroke-dasharray="4 5"/>
+                <rect x="74" y="8" width="8" height="8" rx="1.5"/>
+              </g>
+            </svg>
+            <div class="w-en">that</div>
+            <div class="w-zh">那（个）</div>
+            <div class="w-ex">That is your bag.<br>那是你的包。</div>
+          </td>
+          <td class="arrow-cell">→</td>
+          <td class="word-cell" style="--accent:#3f5fd9; --tint:#eaefff;">
+            <svg class="dicon" viewBox="0 0 100 64">
+              <g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="16" cy="18" r="6"/>
+                <line x1="16" y1="24" x2="16" y2="44"/>
+                <line x1="16" y1="44" x2="11" y2="58"/>
+                <line x1="16" y1="44" x2="21" y2="58"/>
+                <line x1="16" y1="30" x2="9" y2="40"/>
+                <line x1="16" y1="30" x2="32" y2="25"/>
+              </g>
+              <g fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round">
+                <line x1="34" y1="24" x2="70" y2="12" stroke-dasharray="4 5"/>
+                <rect x="72" y="6" width="7" height="7" rx="1.5"/>
+                <rect x="80" y="10" width="7" height="7" rx="1.5"/>
+                <rect x="75" y="15" width="7" height="7" rx="1.5"/>
+              </g>
+            </svg>
+            <div class="w-en">those</div>
+            <div class="w-zh">那些</div>
+            <div class="w-ex">Those are your bags.<br>那些是你的包。</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip">
+    <span class="tip-emoji">💡</span>
+    <p><b>怎么记：</b>竖着看——同一列上下两半是"同一个位置"的单数变复数（this → these，that → those），词尾都加了 -se/-ose 的变化；横着看——同一行左右是"同一个数量"从近到远（this → that，these → those）。近的词都比较短（this / these），远的词字母更多，正好和"要伸手指得更远"对上号。</p>
+  </div>
+
+  <footer>为三年级英语学习制作 · 指示代词认知卡</footer>
+</div>
+</body>
+</html>

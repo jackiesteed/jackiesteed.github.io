@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>人称代词大冒险 · 三年级英语</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7fbfa;
+    --card: #ffffff;
+    --ink: #1f2a2a;
+    --muted: #6b7878;
+    --line: #d8e8e5;
+    --shadow-md: 0 8px 22px rgba(46, 114, 114, .10);
+    --shadow-lg: 0 18px 44px -20px rgba(46, 114, 114, .30);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 16px 60px;
+    font-family: "Quicksand", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  .sheet {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  a.back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Fredoka", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #2e7272;
+    text-decoration: none;
+    margin-bottom: 18px;
+  }
+  a.back:hover { text-decoration: underline; }
+
+  .poster-head {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .badge {
+    display: inline-block;
+    font-family: "Fredoka", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: .02em;
+    color: #2e7272;
+    background: #edf6f4;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 16px;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 5vw, 42px);
+    margin: 0 0 8px;
+    color: #1f2a2a;
+  }
+  .subtitle {
+    font-weight: 600;
+    color: var(--muted);
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    flex-wrap: wrap;
+    margin: 22px 0 28px;
+    font-family: "Fredoka", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+
+  /* ===== table ===== */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 22px;
+    box-shadow: var(--shadow-lg);
+    background: var(--card);
+    border: 1px solid var(--line);
+  }
+  table.pron {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    min-width: 960px;
+  }
+  table.pron th, table.pron td {
+    padding: 12px 8px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  table.pron thead th {
+    font-family: "Fredoka", sans-serif;
+    background: #f2f8f7;
+    color: #1f2a2a;
+    border-bottom: 2px solid var(--line);
+  }
+  table.pron thead .grp-row th {
+    font-size: 15px;
+    font-weight: 700;
+    padding-top: 14px;
+    padding-bottom: 8px;
+  }
+  table.pron thead .col-row th {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+    padding-top: 4px;
+    padding-bottom: 12px;
+    border-top: 1px solid var(--line);
+  }
+  table.pron thead .col-row th small {
+    display: block;
+    font-weight: 600;
+    font-size: 10px;
+    color: #9caeac;
+    margin-top: 1px;
+  }
+  table.pron thead th.corner {
+    background: #eaf3f1;
+  }
+  table.pron thead th.arrow-head {
+    background: #eaf3f1;
+    font-size: 16px;
+  }
+  table.pron tbody td {
+    border-bottom: 1px solid var(--line);
+  }
+  table.pron tbody tr:last-child td {
+    border-bottom: none;
+  }
+  table.pron tbody tr:hover td {
+    background: rgba(46, 114, 114, .04);
+  }
+
+  td.person-cat {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  td.person-cat small {
+    display: block;
+    font-weight: 600;
+    font-size: 11px;
+    color: #9caeac;
+    margin-top: 2px;
+  }
+  td.id-cell {
+    border-left: 6px solid var(--accent, #2e7272);
+    background: var(--tint, #edf6f4);
+  }
+  .id-inner { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .id-emoji { font-size: 22px; line-height: 1; }
+  .id-zh { font-weight: 700; font-size: 12.5px; color: var(--ink); }
+
+  td.word-cell { background: var(--tint, #fff); }
+  .w-en {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    color: var(--accent, #2e7272);
+    line-height: 1.1;
+  }
+  .w-zh { font-size: 11.5px; font-weight: 600; color: var(--muted); margin-top: 2px; }
+
+  .arrow-cell {
+    color: #b9c9c6;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .merge-cell {
+    background: var(--mtint);
+    border-left: 4px solid var(--maccent);
+  }
+  .merge-cell .w-en { color: var(--maccent); font-size: 20px; }
+  .merge-note {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--maccent);
+    background: #fff;
+    border-radius: 999px;
+    padding: 1px 8px;
+    display: inline-block;
+    margin-top: 4px;
+  }
+
+  .same-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--bc, #d98a2e);
+    background: var(--bbg, #fdf1e2);
+    border-radius: 999px;
+    padding: 1px 7px;
+    margin-top: 3px;
+  }
+
+  .tip {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: #fff7e8;
+    border: 2px dashed #e0b256;
+    border-radius: 18px;
+    padding: 16px 18px;
+    margin-top: 24px;
+  }
+  .tip .tip-emoji { font-size: 26px; flex-shrink: 0; }
+  .tip p { margin: 0; font-weight: 600; font-size: 14px; line-height: 1.6; color: #5a4a20; }
+  .tip b { color: #a97c1f; }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 600;
+    margin-top: 40px;
+  }
+
+  @media print {
+    body { padding: 10px; background: #fff; }
+    a.back { display: none; }
+    .table-wrap { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <a class="back" href="/spell/">&larr; 回到单词拼写练习</a>
+
+  <header class="poster-head">
+    <span class="badge">✨ 三年级英语语法认知卡 ✨</span>
+    <h1>人称代词大冒险</h1>
+    <p class="subtitle">竖着看：同一个人怎么变身；横着看：一个人怎么变成一群人</p>
+  </header>
+
+  <div class="legend">
+    <span><i style="background:#3f7ad9"></i>第一人称</span>
+    <span><i style="background:#d98a2e"></i>第二人称</span>
+    <span><i style="background:#2f9e6e"></i>他 he</span>
+    <span><i style="background:#c2508a"></i>她 she</span>
+    <span><i style="background:#b3841f"></i>它 it</span>
+    <span><i style="background:#7a52c9"></i>合体后 = they</span>
+  </div>
+
+  <div class="table-wrap">
+    <table class="pron">
+      <thead>
+        <tr class="grp-row">
+          <th class="corner" colspan="2">人称</th>
+          <th colspan="3">单数（一个人）</th>
+          <th class="arrow-head"></th>
+          <th colspan="3">复数（一群人）</th>
+        </tr>
+        <tr class="col-row">
+          <th class="corner" colspan="2"></th>
+          <th>主格<small>放句首</small></th>
+          <th>宾格<small>动词后</small></th>
+          <th>物主（的）<small>加名词</small></th>
+          <th class="arrow-head">变多 →</th>
+          <th>主格<small>放句首</small></th>
+          <th>宾格<small>动词后</small></th>
+          <th>物主（的）<small>加名词</small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="person-cat">第一<br>人称</td>
+          <td class="id-cell" style="--accent:#3f7ad9; --tint:#eaf1fc;">
+            <div class="id-inner"><span class="id-emoji">🙋</span><span class="id-zh">我</span></div>
+          </td>
+          <td class="word-cell" style="--tint:#eaf1fc;">
+            <div class="w-en" style="color:#3f7ad9">I</div>
+            <div class="w-zh">我是……</div>
+          </td>
+          <td class="word-cell" style="--tint:#eaf1fc;">
+            <div class="w-en" style="color:#3f7ad9">me</div>
+            <div class="w-zh">给我</div>
+          </td>
+          <td class="word-cell" style="--tint:#eaf1fc;">
+            <div class="w-en" style="color:#3f7ad9">my</div>
+            <div class="w-zh">我的书</div>
+          </td>
+          <td class="arrow-cell">→</td>
+          <td class="word-cell merge-cell" style="--mtint:#edf6f4; --maccent:#2e7272;">
+            <div class="w-en">we</div>
+            <div class="w-zh">我们是……</div>
+          </td>
+          <td class="word-cell merge-cell" style="--mtint:#edf6f4; --maccent:#2e7272;">
+            <div class="w-en">us</div>
+            <div class="w-zh">给我们</div>
+          </td>
+          <td class="word-cell merge-cell" style="--mtint:#edf6f4; --maccent:#2e7272;">
+            <div class="w-en">our</div>
+            <div class="w-zh">我们的书</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="person-cat">第二<br>人称</td>
+          <td class="id-cell" style="--accent:#d98a2e; --tint:#fdf1e2;">
+            <div class="id-inner"><span class="id-emoji">🧑</span><span class="id-zh">你</span></div>
+          </td>
+          <td class="word-cell" style="--tint:#fdf1e2;">
+            <div class="w-en" style="color:#d98a2e">you</div>
+            <div class="w-zh">你是……</div>
+          </td>
+          <td class="word-cell" style="--tint:#fdf1e2;">
+            <div class="w-en" style="color:#d98a2e">you</div>
+            <div class="w-zh">给你</div>
+          </td>
+          <td class="word-cell" style="--tint:#fdf1e2;">
+            <div class="w-en" style="color:#d98a2e">your</div>
+            <div class="w-zh">你的书</div>
+          </td>
+          <td class="arrow-cell">→</td>
+          <td class="word-cell merge-cell" style="--mtint:#fdf1e2; --maccent:#d98a2e;">
+            <div class="w-en">you</div>
+            <div class="w-zh">你们是……</div>
+            <div class="same-badge">和左边一样！</div>
+          </td>
+          <td class="word-cell merge-cell" style="--mtint:#fdf1e2; --maccent:#d98a2e;">
+            <div class="w-en">you</div>
+            <div class="w-zh">给你们</div>
+            <div class="same-badge">和左边一样！</div>
+          </td>
+          <td class="word-cell merge-cell" style="--mtint:#fdf1e2; --maccent:#d98a2e;">
+            <div class="w-en">your</div>
+            <div class="w-zh">你们的书</div>
+            <div class="same-badge">和左边一样！</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="person-cat" rowspan="3">第三<br>人称<br><small>他/她/它</small></td>
+          <td class="id-cell" style="--accent:#2f9e6e; --tint:#e8f7f0;">
+            <div class="id-inner"><span class="id-emoji">👦</span><span class="id-zh">他</span></div>
+          </td>
+          <td class="word-cell" style="--tint:#e8f7f0;">
+            <div class="w-en" style="color:#2f9e6e">he</div>
+            <div class="w-zh">他是……</div>
+          </td>
+          <td class="word-cell" style="--tint:#e8f7f0;">
+            <div class="w-en" style="color:#2f9e6e">him</div>
+            <div class="w-zh">给他</div>
+          </td>
+          <td class="word-cell" style="--tint:#e8f7f0;">
+            <div class="w-en" style="color:#2f9e6e">his</div>
+            <div class="w-zh">他的书</div>
+          </td>
+          <td class="arrow-cell">↘</td>
+          <td class="word-cell merge-cell" rowspan="3" style="--mtint:#f1eafb; --maccent:#7a52c9;">
+            <div class="w-en">they</div>
+            <div class="w-zh">他们是……</div>
+            <div class="merge-note">他+她+它 全部合体</div>
+          </td>
+          <td class="word-cell merge-cell" rowspan="3" style="--mtint:#f1eafb; --maccent:#7a52c9;">
+            <div class="w-en">them</div>
+            <div class="w-zh">给他们</div>
+            <div class="merge-note">他+她+它 全部合体</div>
+          </td>
+          <td class="word-cell merge-cell" rowspan="3" style="--mtint:#f1eafb; --maccent:#7a52c9;">
+            <div class="w-en">their</div>
+            <div class="w-zh">他们的书</div>
+            <div class="merge-note">他+她+它 全部合体</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="id-cell" style="--accent:#c2508a; --tint:#fbe9f2;">
+            <div class="id-inner"><span class="id-emoji">👧</span><span class="id-zh">她</span></div>
+          </td>
+          <td class="word-cell" style="--tint:#fbe9f2;">
+            <div class="w-en" style="color:#c2508a">she</div>
+            <div class="w-zh">她是……</div>
+          </td>
+          <td class="word-cell" style="--tint:#fbe9f2;">
+            <div class="w-en" style="color:#c2508a">her</div>
+            <div class="w-zh">给她</div>
+          </td>
+          <td class="word-cell" style="--tint:#fbe9f2;">
+            <div class="w-en" style="color:#c2508a">her</div>
+            <div class="w-zh">她的书</div>
+            <div class="same-badge" style="--bc:#c2508a; --bbg:#fbe9f2;">和宾格一样！</div>
+          </td>
+          <td class="arrow-cell">→</td>
+        </tr>
+        <tr>
+          <td class="id-cell" style="--accent:#b3841f; --tint:#f7efdc;">
+            <div class="id-inner"><span class="id-emoji">🐱</span><span class="id-zh">它</span></div>
+          </td>
+          <td class="word-cell" style="--tint:#f7efdc;">
+            <div class="w-en" style="color:#b3841f">it</div>
+            <div class="w-zh">它是……</div>
+          </td>
+          <td class="word-cell" style="--tint:#f7efdc;">
+            <div class="w-en" style="color:#b3841f">it</div>
+            <div class="w-zh">给它</div>
+            <div class="same-badge" style="--bc:#b3841f; --bbg:#f7efdc;">和主格一样！</div>
+          </td>
+          <td class="word-cell" style="--tint:#f7efdc;">
+            <div class="w-en" style="color:#b3841f">its</div>
+            <div class="w-zh">它的尾巴</div>
+          </td>
+          <td class="arrow-cell">↗</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip">
+    <span class="tip-emoji">💡</span>
+    <p><b>怎么看这张表：</b>一行是"同一个人"的三种形式——<b>主格</b>放在句子开头（He plays.），<b>宾格</b>放在动词后面（I like him.），<b>物主</b>后面要加名词（This is his ball.）。横着看，单数变复数时 he / she / it 这三行会一起"合体"变成 <b>they / them / their</b>；you 不管单复数长得都一样；it 的主格和宾格一样，她的宾格和物主也一样，都是表里悄悄藏的小彩蛋。</p>
+  </div>
+
+  <footer>为三年级英语学习制作 · 人称代词认知卡</footer>
+</div>
+</body>
+</html>
