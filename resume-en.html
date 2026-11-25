@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fangxue (Jackie) Zhang | Résumé</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Engineering résumé for Fangxue (Jackie) Zhang, covering AI developer tools, engineering productivity, and highly available systems.">
+  <meta name="keywords" content="Fangxue Zhang, Jackie Zhang, AI developer tools, engineering productivity, Python, CI/CD, systems architecture">
+  <meta name="author" content="Fangxue (Jackie) Zhang">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- Google Fonts for Academic Serif Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Reset & CSS Variables */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      color-scheme: only light;
+
+      /* Typography */
+      --font-serif: 'Lora', 'Georgia', 'Times New Roman', -apple-system-ui-serif, ui-serif, serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+      /* Color Palette */
+      --bg-color: #f4f5f6;
+      --paper-bg: #ffffff;
+      --text-color: #1a1a1a;
+      --text-muted: #555555;
+      --primary-color: #000000;
+      --rule-color: #111111;
+      --link-color: #0f4c81;
+      --link-hover: #002c53;
+      --company-color: #005550;
+      --accent-bg: #f8f9fa;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+
+      /* Spacing & Sizing */
+      --paper-width: 820px;
+      --paper-padding: 60px 80px;
+      --section-margin: 1.6rem;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-serif);
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 20px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Resume Container (A4-like page layout on screen) */
+    .resume-container {
+      width: 100%;
+      max-width: var(--paper-width);
+      background-color: var(--paper-bg);
+      padding: var(--paper-padding);
+      box-shadow: var(--shadow);
+      border-radius: 4px;
+      position: relative;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+
+
+    /* Header Section */
+    header.resume-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      border-bottom: 1px dashed #cccccc;
+      padding-bottom: 1.5rem;
+    }
+
+    .header-text {
+      text-align: left;
+      flex: 1;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.6rem;
+      color: var(--primary-color);
+      font-variant: small-caps;
+    }
+
+    .header-text h1 {
+      text-align: left;
+    }
+
+    .focus {
+      font: 600 1rem/1.5 var(--font-sans);
+      color: var(--company-color);
+      margin-bottom: 0.75rem;
+    }
+
+    .contact-info {
+      display: grid;
+      grid-template-columns: max-content 1px max-content;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px 18px;
+      font-family: var(--font-serif);
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .contact-row {
+      display: contents;
+    }
+
+    .header-photo {
+      margin-left: 2rem;
+      flex-shrink: 0;
+    }
+
+    .profile-photo {
+      width: 100px;
+      height: 125px;
+      object-fit: cover;
+      border: none;
+      border-radius: 2px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .contact-info a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .wechat-contact {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .contact-info a:hover {
+      color: var(--link-color);
+      text-decoration: underline;
+    }
+
+    .contact-info .divider {
+      display: block;
+      width: 1px;
+      height: 14px;
+      align-self: center;
+      background-color: var(--rule-color);
+      opacity: 0.3;
+    }
+
+    .contact-info svg {
+      width: 14px;
+      height: 14px;
+      stroke-width: 1.8;
+      opacity: 0.8;
+    }
+
+    /* Section Styling (LaTeX LaTeX style hrule) */
+    section {
+      margin-bottom: var(--section-margin);
+    }
+
+    h2 {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--primary-color);
+      border-bottom: 1px solid var(--rule-color);
+      padding-bottom: 3px;
+      margin-bottom: 0.9rem;
+      margin-top: 1.4rem;
+      font-variant: small-caps;
+    }
+
+    /* Experience Entries */
+    .entry {
+      margin-bottom: 1.2rem;
+    }
+
+    .entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.15rem;
+    }
+
+    .entry-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #experience .entry-title {
+      color: var(--company-color);
+    }
+
+    .inline-logo {
+      height: 16px;
+      width: auto;
+      border-radius: 2px;
+      vertical-align: middle;
+      display: inline-block;
+    }
+
+    /* Add contrast behind the white school logo. */
+    .school-logo {
+      background-color: var(--company-color);
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+
+    .entry-right {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .entry-date {
+      font-size: 0.95rem;
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-color);
+    }
+
+    .inline-subtitle {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #2563eb;
+    }
+
+    .entry-subtitle {
+      font-size: 0.95rem;
+      font-style: normal;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .entry-summary {
+      font-size: 0.92rem;
+      line-height: 1.5;
+      margin-top: 0.1rem;
+      margin-bottom: 0.5rem;
+      color: var(--text-color);
+      text-align: justify;
+    }
+
+    .entry-list {
+      margin: 0.2rem 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .entry-list li {
+      position: relative;
+      padding-left: 1.2rem;
+      margin-bottom: 0.25rem;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      color: var(--text-color);
+      text-wrap: pretty;
+    }
+
+    .entry-list li::before {
+      content: "–";
+      position: absolute;
+      left: 0;
+      color: var(--text-color);
+      font-weight: bold;
+    }
+
+    .entry-list li.agent-breakdown-item {
+      padding-left: 1.2rem;
+    }
+
+    .entry-list li.agent-breakdown-item::before {
+      content: none;
+    }
+
+    .entry-list li {
+      margin-bottom: 0.25rem;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      color: var(--text-color);
+      text-wrap: pretty;
+    }
+
+    /* Nested Multi-role Styling (for Qunar) */
+    .sub-entries-container {
+      margin-top: 0.5rem;
+      padding-left: 0.8rem;
+      border-left: 1px solid var(--rule-color);
+    }
+
+    .sub-entry {
+      margin-bottom: 0.8rem;
+    }
+
+    .sub-entry:last-child {
+      margin-bottom: 0;
+    }
+
+    .sub-entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.1rem;
+    }
+
+    .sub-entry-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .sub-entry-date {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Skills List */
+    .skills-list {
+      list-style-type: none;
+    }
+
+    .skills-list li {
+      margin-bottom: 0.4rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .skills-list li strong {
+      font-weight: 700;
+      color: var(--primary-color);
+      display: inline-block;
+      min-width: 80px;
+    }
+
+    /* Awards List */
+    .award-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.45rem;
+      font-size: 0.95rem;
+    }
+
+    .award-name {
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    .award-name strong {
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .award-date {
+      font-variant-numeric: tabular-nums;
+      color: var(--text-color);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      margin-left: 10px;
+    }
+
+    /* Evaluation List */
+    .evaluation-list {
+      list-style-type: none;
+    }
+
+    .evaluation-list li {
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      text-wrap: pretty;
+    }
+
+    .evaluation-list li strong {
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    @media screen and (max-width: 680px) {
+      :root {
+        --paper-padding: 20px clamp(16px, 5vw, 24px);
+      }
+
+      body {
+        padding: 8px;
+      }
+
+      .resume-container {
+        min-width: 0;
+      }
+
+      header.resume-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        margin-bottom: 1.25rem;
+        padding-bottom: 1rem;
+      }
+
+      .header-text {
+        display: contents;
+      }
+
+      .header-text h1 {
+        grid-area: 1 / 1;
+        margin-bottom: 0;
+        font-size: 1.85rem;
+      }
+
+      .focus {
+        grid-area: 2 / 1 / 3 / -1;
+        margin: 0;
+      }
+
+      .header-photo {
+        grid-area: 1 / 2;
+        margin-left: 0;
+      }
+
+      .profile-photo {
+        display: block;
+        width: 64px;
+        height: 80px;
+      }
+
+      .contact-info {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px 14px;
+        font-size: 0.9rem;
+      }
+
+      .contact-row {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px 14px;
+      }
+
+      .contact-info .divider {
+        display: none;
+      }
+
+      .contact-info a {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .contact-info svg {
+        flex-shrink: 0;
+      }
+
+      .entry-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        margin-bottom: 0.35rem;
+      }
+
+      .entry-right {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 2px 12px;
+      }
+
+      .entry-date {
+        color: var(--text-color);
+        white-space: nowrap;
+      }
+
+      .entry-summary {
+        text-align: left;
+      }
+    }
+
+    @page { size: A4; margin: 14mm 17mm; }
+    @media print {
+      body { display: block; padding: 0; background: white; }
+      .resume-container { max-width: none; padding: 0; box-shadow: none; }
+      header.resume-header { margin-bottom: 0.6rem; padding-bottom: 0.6rem; }
+      .profile-photo { width: 70px; height: 88px; }
+      section, .entry { margin-bottom: 0.5rem; }
+      h2 { margin: 0.65rem 0 0.35rem; break-after: avoid; }
+      .entry-header { break-after: avoid; }
+      .entry, .entry-list li { break-inside: avoid; }
+      .entry-list li, .entry-summary { font-size: 10pt; line-height: 1.48; }
+    }
+    h1 { letter-spacing: normal; font-variant: normal; }
+    .entry-summary { text-align: left; }
+    .entry-date { white-space: nowrap; }
+    .entry-header { column-gap: 0.75rem; }
+    @media print {
+      h1 { font-size: 21pt; }
+      #experience .entry { break-inside: auto; }
+      .entry-summary { break-after: avoid; }
+      .entry-title { font-size: 11pt; }
+      .entry-header { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+
+
+  <!-- Main Resume Content -->
+  <main class="resume-container">
+
+    <!-- Header -->
+    <header class="resume-header">
+      <div class="header-text">
+        <h1>Fangxue (Jackie) Zhang</h1>
+        <p class="focus">AI Developer Tools &amp; Engineering Productivity</p>
+        <div class="contact-info">
+          <div class="contact-row">
+            <!-- Email -->
+            <a href="mailto:jackiecpp@gmail.com">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              jackiecpp@gmail.com
+            </a>
+
+            <span class="divider" aria-hidden="true"></span>
+
+            <!-- Phone -->
+            <a href="tel:+8613521078475">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              (+86) 13521078475
+            </a>
+          </div>
+
+          <div class="contact-row">
+            <!-- Website -->
+            <a href="https://jackiesteed.github.io" target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              jackiesteed.github.io
+            </a>
+
+            <span class="divider" aria-hidden="true"></span>
+
+            <!-- WeChat -->
+            <span class="wechat-contact">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9.3 3.5C5.2 3.5 1.8 6.2 1.8 9.5c0 1.8 1.1 3.5 2.9 4.6l-.8 2.4 2.7-1.3c.9.2 1.8.3 2.7.3 4.1 0 7.5-2.7 7.5-6S13.4 3.5 9.3 3.5Z"></path>
+                <path d="M22.2 14.2c0-2.8-2.7-5.1-6-5.1s-6 2.3-6 5.1 2.7 5.1 6 5.1c.8 0 1.6-.1 2.3-.4l2.2 1.1-.6-1.9c1.3-1 2.1-2.3 2.1-3.9Z"></path>
+                <circle cx="7.1" cy="8.7" r=".85" fill="currentColor" stroke="none"></circle>
+                <circle cx="11.5" cy="8.7" r=".85" fill="currentColor" stroke="none"></circle>
+                <circle cx="14.5" cy="13.7" r=".75" fill="currentColor" stroke="none"></circle>
+                <circle cx="18.2" cy="13.7" r=".75" fill="currentColor" stroke="none"></circle>
+              </svg>
+              WeChat · jackiesteed
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="header-photo">
+        <img src="zfx.jpg" alt="Fangxue Zhang" class="profile-photo">
+      </div>
+    </header>
+
+    <section id="projects">
+      <h2>Projects</h2>
+      <article class="entry">
+        <h3 class="entry-title">Li Auto | Sales Knowledge Assistant</h3>
+        <p class="entry-summary">Contributed to the <strong>full-stack development</strong> of an in-house Q&amp;A agent that brings company knowledge and sales data into one conversation. Designed as a company-wide knowledge assistant, it serves <strong>10,000 frontline sales specialists</strong> and returns answers <strong>within 10 seconds end to end</strong>.</p>
+        <ul class="entry-list">
+          <li>Combined retrieval-augmented generation (RAG) over internal documents and sales policies with a knowledge graph that captures business relationships. Integrated public web search and made transcripts of customer follow-up calls searchable for analysis.</li>
+          <li>Modeled tickets, leads, customers, and their relationships in a <strong>business ontology</strong> so sales specialists can query their own records in natural language. Built dedicated endpoints with predefined retrieval logic to speed up frequent queries.</li>
+          <li>Organized unstructured competitor information in a knowledge graph so specialists can look up and compare competing products.</li>
+          <li>Established a <strong>Q&amp;A evaluation benchmark</strong> for comparing releases. Used ablation studies to isolate how individual changes affected answer quality and guide subsequent improvements.</li>
+        </ul>
+      </article>
+      <article class="entry">
+        <h3 class="entry-title">OpenBot | Multi-Agent Runtime and Cloud Task Gateway</h3>
+        <p class="entry-summary">Built a cloud gateway as a personal project. Users can invoke coding agents such as Codex on their own machines from a Telegram direct message or group chat and receive the result in the same conversation.</p>
+        <ul class="entry-list">
+          <li>Developed a <strong>Rust/WebAssembly gateway</strong> that connects to local execution hosts over WebSocket. Hosts advertise available agents, and the gateway dispatches tasks according to tenant and device bindings.</li>
+          <li>Implemented <strong>task deduplication and reconnect recovery</strong>. Hosts persist tasks and pending results in SQLite, then resend unacknowledged events after reconnecting so a lost acknowledgment does not trigger duplicate execution.</li>
+          <li>Wrote Python checks that run locally and in GitHub Actions on Linux and macOS. Integration tests pair scripted agents with a real execution host to reproduce disconnects, lost acknowledgments, and restarts.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="experience">
+      <h2>Professional Experience</h2>
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title">Li Auto<img src="logos/lixiang.ico" alt="" class="inline-logo"></span>
+          <div class="entry-right">
+            <span class="inline-subtitle">Head of Sales Systems Engineering</span>
+            <span class="entry-date">Jan 2022 – Present</span>
+          </div>
+        </div>
+        <p class="entry-summary">Lead a 20-person team responsible for the technical roadmap and architecture of sales systems, including AI agents for frontline sales and engineering support.</p>
+        <ul class="entry-list">
+          <li>Built a <strong>sales support agent</strong> that investigates reported issues in production and test environments and tracks each ticket through closure.</li>
+          <li>Introduced AI-assisted coding and added quality checks to the development workflow so engineers can validate code earlier.</li>
+          <li>Oversee systems spanning marketing, lead management, retail conversion, vehicle delivery, and owner engagement. Built a team combining software engineering, data, and AI agent development.</li>
+          <li>Built a sales assistant that combines sales quality reviews with a sales knowledge graph to support lead follow-up, test drives, orders, and customer conversations on WeCom.</li>
+          <li>Built a voice-of-the-customer agent that analyzes feedback trends daily to inform company strategy.</li>
+          <li>Established a data-driven evaluation process to track agent quality across releases.</li>
+          <li>Led reliability improvements across core sales microservices. Implemented adaptive rate limiting and graceful degradation to handle traffic peaks during vehicle launches and ordering, meeting a <strong>99.99% SLA</strong> for core services.</li>
+        </ul>
+      </div>
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title">Atour<img src="atour.png" alt="" class="inline-logo"></span>
+          <div class="entry-right">
+            <span class="inline-subtitle">Director of Engineering, Backend and Data</span>
+            <span class="entry-date">Jan 2018 – Dec 2021</span>
+          </div>
+        </div>
+        <p class="entry-summary">Reported to the CTO and managed 30 engineers across membership, shared platforms, and data. Built the engineering organization and its consumer, business, and shared systems. Oversaw app microservices, data infrastructure, and hotel pricing for a group with more than 50 million members in 2020.</p>
+        <ul class="entry-list">
+          <li>Designed and delivered a shared hotel pricing platform and restructured pricing, transactions, and user accounts as reusable services.</li>
+          <li>Led data platform and algorithm development, using data analysis and model improvements to inform commercial decisions.</li>
+          <li>Built Java middleware and standardized development and deployment workflows to streamline delivery.</li>
+          <li>Established engineering and coding standards, promoted technical knowledge sharing, and developed engineers for roles of increasing responsibility.</li>
+        </ul>
+      </div>
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title">Qunar<img src="logos/qunar.ico" alt="" class="inline-logo"></span>
+          <div class="entry-right">
+            <span class="inline-subtitle">Software Architect</span>
+            <span class="entry-date">Apr 2014 – Jan 2018</span>
+          </div>
+        </div>
+        <ul class="entry-list">
+          <li>Led the hotel search ranking team, overseeing retrieval system development and delivery against business metrics.</li>
+          <li>Led the redesign of the pricing platform and built a graph execution engine to run complex pricing logic in parallel. Independently designed a real-time monitor for hotel search conversion with millisecond granularity.</li>
+          <li>Led development of in-memory search for hotel group deals and movie tickets. Consolidated partner integrations behind a common interface to reduce production incidents.</li>
+          <li>Re-engineered the machine learning system for hotel ranking to deliver relevant results with low latency under high concurrency.</li>
+        </ul>
+      </div>
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title">Sogou<img src="logos/sogou.ico" alt="" class="inline-logo"></span>
+          <div class="entry-right">
+            <span class="inline-subtitle">Software Engineer</span>
+            <span class="entry-date">Jan 2012 – Apr 2014</span>
+          </div>
+        </div>
+        <ul class="entry-list">
+          <li>Led development of an internal messaging client using DuiLib and the Chrome browser engine to deliver office notifications and render message details as web pages.</li>
+          <li>Reviewed Sogou’s browser engine source code and documented its internals in technical guides and an engineering wiki.</li>
+          <li>Developed both the frontend and backend of employee management and weekly reporting modules for the internal office platform.</li>
+          <li>Wrote a script interpreter in Python, implementing a lexer and parser to translate a custom language into efficient Python code with support for hooks during translation.</li>
+          <li>Led early development of an enterprise collaboration tool built around a cloud calendar.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="education">
+      <h2>Education and Honors</h2>
+      <div class="entry">
+        <div class="entry-header">
+          <span class="entry-title">Shandong University of Science and Technology<img src="logos/sdust.png" alt="" class="inline-logo school-logo"></span>
+          <span class="entry-date">2008 – 2012</span>
+        </div>
+        <p class="entry-subtitle">Bachelor’s degree in Computer Science and Technology</p>
+        <ul class="entry-list">
+          <li><strong>ACM International Collegiate Programming Contest (ICPC)</strong> · Silver medals at the Beijing and Fuzhou Asia regional contests, 2011.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
