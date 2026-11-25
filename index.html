@@ -604,6 +604,15 @@
           <li>建立<strong>销售知识问答 Agent 评测基准</strong>，定期对比版本更新前后的问答效果。通过<strong>消融实验</strong>评估各项改动对回答质量的贡献，据此调整方案，持续改善一线销售专家的问答体验。</li>
         </ul>
       </article>
+      <article class="entry">
+        <h3 class="entry-title">OpenBot｜多 Agent 运行时与云端任务网关</h3>
+        <p class="entry-summary">个人项目。基于开源 Codync 拆分出可独立运行的 Rust 服务，开发云端任务网关。用户可从 Telegram 私聊或群聊向 Codex 等编程 Agent 发起任务，由本机执行并将结果回传到原会话。</p>
+        <ul class="entry-list">
+          <li>开发 <strong>Rust/Wasm 网关</strong>，通过 WebSocket 连接云端与本地执行主机。主机上报可用的 Agent，网关按租户和设备绑定关系分发任务。</li>
+          <li>实现<strong>任务去重与断线恢复</strong>。主机用 SQLite 持久化任务和待确认的执行结果，重连后重发未确认事件，避免因回执丢失而重复执行任务。</li>
+          <li>用 Python 编排本地与 GitHub Actions 共用的<strong>质量检查</strong>，覆盖 Linux 和 macOS。集成测试用脚本模拟编程 Agent，配合真实执行主机复现断线、回执丢失和重启场景。</li>
+        </ul>
+      </article>
     </section>
 
     <!-- Work Experience -->
